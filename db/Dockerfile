@@ -1,0 +1,4 @@
+FROM postgres
+
+ENV POSTGRES_DB=ThreePart
+ENV POSTGRES_PASSWORD=Hello

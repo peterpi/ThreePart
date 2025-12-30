@@ -1,0 +1,18 @@
+services:
+
+
+  db:
+    build: db
+
+
+  api:
+    build: api
+
+
+  frontend:
+    build: frontend
+    ports:
+      - "8000:8000"
+
+
+
