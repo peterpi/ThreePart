@@ -6,7 +6,9 @@ services:
 
 
   api:
-    build: api
+    build:
+      context: api
+      target: prod
 
 
   frontend:
