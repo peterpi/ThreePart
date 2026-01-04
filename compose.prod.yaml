@@ -15,6 +15,8 @@ services:
   certbot:
     image: certbot/certbot
     command: "renew --agree-tos -n"
+    ports:
+      - "80:80"
     volumes:
       - letsencrypt-etc:/etc/letsencrypt:rw
       - letsencrypt-var:/var/lib/letsencrypt:rw
