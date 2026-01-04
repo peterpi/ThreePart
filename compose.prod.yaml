@@ -1,0 +1,26 @@
+
+
+services:
+
+  frontend:
+    build:
+      target: prod
+    ports:
+      - "443:443"
+    volumes:
+      - letsencrypt-etc:/etc/letsencrypt:ro
+      - letsencrypt-var:/var/lib/letsencrypt:ro
+
+
+  certbot:
+    image: certbot/certbot
+    command: "renew --agree-tos -n"
+    volumes:
+      - letsencrypt-etc:/etc/letsencrypt:rw
+      - letsencrypt-var:/var/lib/letsencrypt:rw
+
+
+
+volumes:
+  letsencrypt-etc:
+  letsencrypt-var:
