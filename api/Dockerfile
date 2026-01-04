@@ -5,7 +5,7 @@ RUN pip install -r requirements.txt && rm requirements.txt
 COPY myapp /opt/myapp/myapp
 WORKDIR  /opt/myapp
 
-ENTRYPOINT ["gunicorn", "access-logfile", "-"]
+ENTRYPOINT ["gunicorn", "--access-logfile", "-"]
 CMD ["-b", "0.0.0.0:5000", "myapp:create_app()"]
 EXPOSE 5000
 
