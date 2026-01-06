@@ -1,4 +1,4 @@
-FROM postgres
+FROM postgres:18.1
 
-ENV POSTGRES_DB=ThreePart
+ENV POSTGRES_DB=bookings-orgs
 ENV POSTGRES_PASSWORD=Hello
