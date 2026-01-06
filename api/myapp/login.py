@@ -1,5 +1,5 @@
 from flask import (app, request, Blueprint, session)
-from .auth import auth
+from ./auth import auth
 bp = Blueprint ("login", __name__)
 
 
