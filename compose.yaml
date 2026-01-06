@@ -6,18 +6,13 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
 
-  db_updater:
-    build: db_updater
-    depends_on:
-      - db
 
   api:
     build:
       context: api
       target: prod
     depends_on:
-      db_updater:
-        condition: service_completed_successfully
+      - db
 
 
   frontend:
