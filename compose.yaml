@@ -7,12 +7,21 @@ services:
       - db-data:/var/lib/postgresql
 
 
+  db_updater:
+    build: db_updater
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+
   api:
     build:
       context: api
       target: prod
     depends_on:
-      - db
+      db_updater:
+        condition: service_completed_successfully
 
 
   frontend:

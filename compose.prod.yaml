@@ -2,18 +2,6 @@
 
 services:
 
-
-  db_updater:
-    build: db_updater
-    depends_on:
-      - db
-
-
-  api:
-    depends_on:
-      db_updater:
-        condition: service_completed_successfully
-
   frontend:
     build:
       target: prod
