@@ -12,9 +12,9 @@ def _verify(username, password):
 	if u:
 		return u
 	with orgindex.get_db() as index:
-		cur = orgindex.execute ("SELECT * FROM org_user WHERE id = %s", (username))
+		cur = index.execute ("SELECT * FROM org_user WHERE id = %s", (username,))
 		row = cur.fetchone()
 		if not row:
 			return False
-		u = dict (cur.fetchone())
+		u = dict (row)
 		return u
