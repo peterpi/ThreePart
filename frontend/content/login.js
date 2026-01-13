@@ -4,6 +4,7 @@ var template = await fetch ("login.html")
 	.then (r => r.text())
 	.then (t => new DOMParser().parseFromString(t, "text/html"))
 	.then (doc => doc.getElementById("login"))
+template = document.adoptNode(template)
 
 
 class Login extends HTMLElement
@@ -13,28 +14,37 @@ class Login extends HTMLElement
 		super()
 	}
 
+	#email
+	#password
+
 	connectedCallback() {
 		var shadow = this.attachShadow ({mode:"closed"})
 		var login = template.content.cloneNode(true)
+		shadow.appendChild(login)
 
-		var email = login.querySelector("#email")
-		var passwd = login.querySelector("#pass")
-		var submit = login.querySelector("#login")
+		this.#email = shadow.querySelector("#email")
+		this.#password = shadow.querySelector("#pass")
+		var submit = shadow.querySelector("#login")
 
-		submit.addEventListener("click", e => {
-			var e = email.value
-			var p = passwd.value
-			fetch ("/api/login", {
-				method: "POST",
-				headers: {
-					"Authorization" : "Basic " + btoa (e + ":" + p).toString()
-				}
-			})
-			.then (r => r.json())
-			.then (j => this.dispatchEvent (new Event ("login")))
+		submit.addEventListener("click", this.#tryLogin);
+		this.#tryLogin();
+	}
+
+
+	#tryLogin ()
+	{
+		var e = this.#email.value
+		var p = this.#password.value
+		var basic = btoa (e + ":" + p).toString()
+		fetch ("/api/login", {
+			method: "POST"
 		})
-
-		shadow.append(login)
+		.then (r => {
+			if (!r.ok)
+				throw new Error();
+			return r.json()
+		})
+		.then (j => this.dispatchEvent (new Event ("logged-in", j)))
 	}
 }
 
