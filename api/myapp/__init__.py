@@ -16,5 +16,10 @@ def create_app():
 	
 	from . import login
 	api.register_blueprint(login.bp, url_prefix="/login")
+	from . import services
+	api.register_blueprint(services.bp, url_prefix="/services")
 	a.register_blueprint(api, url_prefix="/api")
+
+	from . import db
+	a.teardown_appcontext(db.close_db)
 	return a

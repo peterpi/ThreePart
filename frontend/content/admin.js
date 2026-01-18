@@ -22,6 +22,10 @@ class AdminView extends HTMLElement
 		shadow.querySelector("#back").addEventListener("click", _ => {
 			this.dispatchEvent(new Event("close-requested"))
 		})
+
+		shadow.querySelector("#services").addEventListener("click", _ => {
+			this.dispatchEvent(new Event ("serviceseditor-requested"))
+		})
 	}
 }
 
@@ -31,7 +35,21 @@ export class AdminMenu
 	view
 	
 	constructor () {
-		this.view = document.createElement("bookings-admin")
+		var view = document.createElement("bookings-admin")
+		view.addEventListener("serviceseditor-requested", _ => {
+			view.hidden = true
+			import ("./services.js")
+				.then (services => {
+					var editor = new services.ServicesEditor()
+					view.parentElement.appendChild (editor.view)
+					editor.view.addEventListener("back-requested", _ => {
+						editor.view.remove()
+						view.hidden = false
+					})
+				})
+		})
+
+		this.view = view
 	}
 
 }
