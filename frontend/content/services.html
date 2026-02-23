@@ -10,12 +10,27 @@
 			</div>
 		</template>
 
+		<template id="services-editor-new-service">
+			<section id="new-service">
+				<h3>Create</h3>
+				<div>
+					<label for="name">Name</label>
+					<input type="text" id="name" />
+					<button id="create">Create</button>
+				</div>
+			</service>
+		</template>
 
 		<template id="services-editor">
 			<button id="back">Back</button>
+			<div id="loading">
+				<progress>Loading</progress>
+			</div>
 			<div id="rows">
 
 			</div>
+			<bookings-serviceseditor-new-service id="create" />
+
 		</template>
 	</body>
 </html>
