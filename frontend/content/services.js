@@ -114,7 +114,12 @@ class ServiceEditorView extends HTMLElement
 					{"name": nameInput.value},
 					{bubbles: true, composed:true}), )
 		})
+		var variations = shadow.getElementById("variations")
+		variations.addEventListener("click", e => {
+			this.dispatchEvent(new CustomEvent("edit-variations-requested"))
+		})
 	}
+
 
 }
 
@@ -195,8 +200,24 @@ class ServicesEditorView extends HTMLElement
 		console.assert(details)
 		var sv = document.createElement("bookings-serviceeditor")
 		sv.s = details
+		sv.addEventListener("edit-variations-requested", e=>this.#editVariations(sv.s))
 		var rows = this.#shadow.querySelector("#rows")
 		rows.appendChild(sv)
+	}
+
+
+	#editVariations(s)
+	{
+		import ("./servicevariations.js").then (mod => {
+			var variationsEditor = document.createElement("service-variations-editor")
+			variationsEditor.setAttribute ("uuid", s.uuid)
+			this.hidden = true
+			document.body.appendChild (variationsEditor)
+			variationsEditor.addEventListener("close-requested", e => {
+				variationsEditor.remove();
+				this.hidden = false
+			})
+		})
 	}
 
 	async #createService (details)

@@ -14,6 +14,15 @@ def get_all():
 	all = cur.fetchall()
 	return {"services" : all}
 
+@bp.get("<uuid:uuid>")
+@auth.login_required
+def get_one(uuid):
+	db = get_db()
+	cur = db.execute ("SELECT uuid, name FROM service WHERE uuid = %s", (uuid,))
+	row = cur.fetchone()
+	if not row :
+		abort (404)
+	return row
 
 @bp.post("")
 @auth.login_required
