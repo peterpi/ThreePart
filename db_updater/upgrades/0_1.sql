@@ -8,6 +8,7 @@ INSERT INTO booking_globals (ver) VALUES (1);
 
 create table org (
 	id UUID PRIMARY KEY,
+	slug text UNIQUE NOT NULL,
 	name TEXT NOT NULL
 );
 
