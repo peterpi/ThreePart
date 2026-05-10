@@ -1,0 +1,10 @@
+
+CREATE TABLE org (
+    id UUID PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE org_user (
+    id TEXT PRIMARY KEY,
+    org UUID NOT NULL REFERENCES org(id)
+)
