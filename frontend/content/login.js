@@ -1,10 +1,14 @@
+"use strict"
 
-
-var template = await fetch ("login.html")
+var htmlDoc =await fetch ("login.html")
 	.then (r => r.text())
 	.then (t => new DOMParser().parseFromString(t, "text/html"))
-	.then (doc => doc.getElementById("login"))
+
+var template = htmlDoc.getElementById("login")
 template = document.adoptNode(template)
+
+var signup = htmlDoc.getElementById("signup")
+signup = document.adoptNode(signup)
 
 
 class Login extends HTMLElement
@@ -25,9 +29,13 @@ class Login extends HTMLElement
 		this.#email = shadow.querySelector("#email")
 		this.#password = shadow.querySelector("#pass")
 		var submit = shadow.querySelector("#login")
+		submit.addEventListener("click", _ => this.#tryLogin());
 
-		submit.addEventListener("click", this.#tryLogin);
-		this.#tryLogin();
+		var signup = shadow.getElementById("signup")
+		var me = this
+		signup.addEventListener("click", _ => this.#signup());
+
+		// this.#tryLogin();
 	}
 
 
@@ -45,6 +53,11 @@ class Login extends HTMLElement
 			return r.json()
 		})
 		.then (j => this.dispatchEvent (new Event ("logged-in", j)))
+	}
+
+	#signup () {
+		var su = signup.content.cloneNode(true)
+		this.parentElement.append(su)
 	}
 }
 
