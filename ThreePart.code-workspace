@@ -19,6 +19,9 @@
 		{
 			"name": ".devcontainer",
 			"path": ".devcontainer"
+		},
+		{
+			"path": ".github"
 		}
 	],
 	"settings": {}
