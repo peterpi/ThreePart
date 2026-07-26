@@ -1,27 +1,28 @@
 {
 	"folders": [
 		{
-			"name": "db",
-			"path": "db"
-		},
-		{
-			"name": "db_updater",
-			"path": "db_updater"
-		},
-		{
-			"name": "api",
-			"path": "api"
-		},
-		{
-			"name": "frontend",
-			"path": "frontend"
+			"name": ".github",
+			"path": ".github"
 		},
 		{
 			"name": ".devcontainer",
 			"path": ".devcontainer"
 		},
 		{
-			"path": ".github"
+			"name": "frontend",
+			"path": "frontend"
+		},
+		{
+			"name": "api",
+			"path": "api"
+		},
+		{
+			"name": "db",
+			"path": "db"
+		},
+		{
+			"name": "db_updater",
+			"path": "db_updater"
 		}
 	],
 	"settings": {}
