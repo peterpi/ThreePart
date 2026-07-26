@@ -16,4 +16,6 @@ services:
     ports:
       - "80:80"
     volumes:
+      # Mount the directory from the host, so that edits to the files do not require an image rebuild.
       - ./frontend/content:/usr/share/nginx/html:ro
+
