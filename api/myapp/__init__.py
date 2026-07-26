@@ -12,14 +12,21 @@ def create_app():
 		a.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 	)
 
+	# Healthcheck / debugging.
+	@a.route("/hello")
+	def healthyHello():
+		return "Hello world."
+
 	api = Blueprint ("api", __name__)
 	
 	from . import login
 	api.register_blueprint(login.bp, url_prefix="/login")
 	from . import services
 	api.register_blueprint(services.bp, url_prefix="/services")
-	a.register_blueprint(api, url_prefix="/api")
+	a.register_blueprint(api, url_prefix="/")
 
 	from . import db
 	a.teardown_appcontext(db.close_db)
+
+
 	return a
