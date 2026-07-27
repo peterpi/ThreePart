@@ -8,5 +8,5 @@ COPY conf.d/dev/default.conf /etc/nginx/conf.d/
 EXPOSE 80
 
 FROM base AS prod
-COPY conf.d/prod/default.conf /etc/nginx/conf.d/
+COPY conf.d/prod/default.conf.template /etc/nginx/templates/
 EXPOSE 443
