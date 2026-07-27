@@ -2,10 +2,13 @@ server {
 
 	listen 443 ssl;
 
-	ssl_certificate /etc/letsencrypt/live/bookings.peterpi.org/fullchain.pem;
-	ssl_certifcate_key /etc/letsencrypt/live/bookings.peterpi.org/privkey.pem;
+	ssl_certificate $BOOKINGS_SSL_CERT ;
+	# e.g.  /etc/letsencrypt/live/bookings.peterpi.org/fullchain.pem;
 
-	server_name bookings.peterpi.org;
+	ssl_certificate_key $BOOKINGS_SSL_KEY ;
+	# e.g. /etc/letsencrypt/live/bookings.peterpi.org/privkey.pem;
+
+	server_name $BOOKINGS_SERVER_NAME ;
 
 	location / {
 		root /usr/share/nginx/html;

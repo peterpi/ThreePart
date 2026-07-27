@@ -3,6 +3,8 @@ services:
 
   db:
     build: db
+    expose:
+      - 5432
     volumes:
       - db-data:/var/lib/postgresql
 
@@ -18,13 +20,21 @@ services:
   api:
     build:
       context: api
+      target: dev
     depends_on:
       db_updater:
         condition: service_completed_successfully
 
 
   frontend:
-    build: frontend
+    build:
+      context: frontend
+      target: dev
+    ports:
+      - "80:80"
+    volumes:
+      # Mount the directory from the host, so that edits to the files do not require an image rebuild.
+      - ./frontend/content:/usr/share/nginx/html:ro
     depends_on:
       - api
 
