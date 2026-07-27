@@ -26,6 +26,10 @@ services:
         condition: service_completed_successfully
 
 
+  superapi:
+    build:
+      context: superapi
+
   frontend:
     build:
       context: frontend
@@ -37,6 +41,7 @@ services:
       - ./frontend/content:/usr/share/nginx/html:ro
     depends_on:
       - api
+      - superapi
 
 volumes:
   db-data:
