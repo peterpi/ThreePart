@@ -1,0 +1,9 @@
+
+services:
+
+  
+  superapi:
+    volumes:
+      - .:/workspace:cached
+
+    command: sleep infinity

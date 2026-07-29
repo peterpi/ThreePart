@@ -1,3 +1,7 @@
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPTokenAuth
 
-auth = HTTPBasicAuth()
+auth = HTTPTokenAuth(scheme="Bearer")
+
+@auth.verify_token
+def __verify():
+	return "Peter"
