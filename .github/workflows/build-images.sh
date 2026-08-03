@@ -1,12 +1,14 @@
 set -e
 
-docker build -t peterpimley/bookings-db:$GITHUB_REF_NAME db
-docker build -t peterpimley/bookings-api:$GITHUB_REF_NAME api
-docker build -t peterpimley/bookings-frontend:$GITHUB_REF_NAME frontend
+images=("db" "api" "superapi" "frontend")
+
+for image in "${images[@]}"; do
+	docker build -t peterpimley/bookings-$image:$GITHUB_REF_NAME $image
+done
 
 
 echo $DOCKER_HUB_PAT | docker login --password-stdin -u peterpimley
 
-docker push peterpimley/bookings-db:$GITHUB_REF_NAME
-docker push peterpimley/bookings-api:$GITHUB_REF_NAME
-docker push peterpimley/bookings-frontend:$GITHUB_REF_NAME
+for image in "${images[@]}"; do
+	docker push peterpimley/bookings-$image:$GITHUB_REF_NAME
+done
