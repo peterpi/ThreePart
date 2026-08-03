@@ -11,7 +11,7 @@ def create_app():
 	)
 
 	from . import org
-	app.register_blueprint(org.bp, url_prefix="/org")
+	app.register_blueprint(org.bp, url_prefix="/orgs")
 
 	@app.route("/")
 	def hello():
@@ -19,5 +19,9 @@ def create_app():
 
 	from . import db
 	app.teardown_appcontext(db.close_db)
+
+	from . import installation
+	app.register_blueprint(installation.bp, url_prefix="/installation")
+
 
 	return app

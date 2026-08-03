@@ -1,10 +1,21 @@
 
-CREATE TABLE org (
-    id UUID PRIMARY KEY,
-    name TEXT NOT NULL
+CREATE TABLE account (
+	id uuid primary key default gen_random_uuid(),
+	email text unique not null
 );
 
-CREATE TABLE org_user (
-    id TEXT PRIMARY KEY,
-    org UUID NOT NULL REFERENCES org(id)
-)
+CREATE TABLE installation (
+	id uuid primary key default gen_random_uuid(),
+	superuser UUID NOT NULL REFERENCES account(id)
+);
+
+
+CREATE TABLE org (
+	id UUID PRIMARY KEY default gen_random_uuid(),
+	orgname TEXT NOT NULL
+);
+
+CREATE TABLE org_account_membership (
+	org UUID NOT NULL REFERENCES org(id),
+	account UUID NOT NULL REFERENCES account(id)
+);

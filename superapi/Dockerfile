@@ -8,7 +8,7 @@ RUN pip install --root-user-action ignore -r requirements.txt
 
 
 WORKDIR /opt/superapi
-COPY gunicorn.conf.py .
+COPY gunicorn.conf.py new_org.sql .
 COPY superapi ./superapi
 
 

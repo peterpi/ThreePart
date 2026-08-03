@@ -9,26 +9,24 @@ services:
       - db-data:/var/lib/postgresql
 
 
-  db_updater:
-    build: db_updater
-    depends_on:
-      db:
-        condition: service_healthy
-
-
 
   api:
     build:
       context: api
       target: dev
     depends_on:
-      db_updater:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+        restart: true
 
 
   superapi:
     build:
       context: superapi
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
 
   frontend:
     build:

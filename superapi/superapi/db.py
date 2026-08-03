@@ -10,8 +10,8 @@ def get_db():
 		return db
 	url = f"postgres://bookings@db/bookings-orgs"
 	db = psycopg.connect(url, password = "Hello")
-	db.cursor_factory = psycopg.rows.dict_row
-	g.db = p
+	db.row_factory = psycopg.rows.dict_row
+	g.db = db
 	return db
 
 def close_db(e = None):

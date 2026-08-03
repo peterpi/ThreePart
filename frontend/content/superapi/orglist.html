@@ -1,0 +1,37 @@
+i
+
+<html>
+
+
+<head>
+	
+	<template id="orglist">
+		<div>
+			<section>Organizations</section>
+			<div id="rows"></div>
+
+			<bookings-orglist-newrow id="newrow"/>
+		</div>
+	</template>
+
+
+	<template id="row">
+		<div>
+			<input type="text" id="orgname" disabled/>
+			<label for="orgname">Name</label>
+			<button id="delete">Delete</button>
+		</div>
+	</template>
+
+	<template id="newrow">
+		<div>
+			<label for="name">Name</label>
+			<input id="name" type="text" autocomplete="organization">
+			<button id="submit">Add</button>
+		</div>
+	</template>
+
+</head>
+
+
+</html>
