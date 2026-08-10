@@ -13,8 +13,11 @@ class Bootstrap extends HTMLElement
 	{
 		try
 		{
-			var installation = await fetch ("api/installation")
-				.then (r => r.json())
+			var installation 
+			var resp = await fetch ("api/installation")
+			if (!resp.ok)
+				throw new Error ("No Installation"); // See catch below.
+			var installation = (await resp.json()).installation
 			console.log ("Got")
 			if (!installation.id)
 				throw installation // Catch it below

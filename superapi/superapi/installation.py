@@ -13,7 +13,9 @@ def get_installation_uuid():
 	row = db.execute ("SELECT id FROM INSTALLATION").fetchone()
 	if not row:
 		return {}
-	return dict(row)
+	return {
+		"installation": dict(row)
+	}
 	
 
 @bp.post("")
