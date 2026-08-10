@@ -1,6 +1,6 @@
 FROM postgres:18.1
 
-COPY init.sql /docker-entrypoint-initdb.d/
+COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d/
 
 ENV POSTGRES_DB=bookings-orgs
 ENV POSTGRES_PASSWORD=Hello
