@@ -5,7 +5,8 @@ psql -U $POSTGRES_USER new_org_template << HERE
 
 
 CREATE TABLE service (
-	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid()
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+	name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE staff (
