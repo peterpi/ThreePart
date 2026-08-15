@@ -20,7 +20,7 @@ def new_org():
 	j = request.json
 	try:
 		name = j["name"]
-		cur = db.execute ("INSERT INTO org (orgname) VALUES (%s) RETURNING id", (name,))
+		cur = db.execute ("INSERT INTO org (orgname) VALUES (%s) RETURNING *", (name,))
 		org_row = cur.fetchone()
 		org_id = str(org_row["id"])
 		# The creation of a database cannot happen within a transaction,
