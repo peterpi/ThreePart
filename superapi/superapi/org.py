@@ -6,6 +6,12 @@ import psycopg
 
 bp = Blueprint ("org", __name__)
 
+
+def db_name_for_org (orgId) :
+	orgDb = f"org_{orgId.replace("-", "_")}" # e.g. org_1ffac468_7313_4f73_98c5_8935ccfe3896
+	return orgDb
+
+
 @bp.get("")
 def get_some():
 	d = get_db()
@@ -32,7 +38,7 @@ def new_org():
 			# Postgres says that database names must start with a-z,
 			# and also that the "-" in a uuid is invalid.
 			# So:
-			org_db = f"org_{org_id.replace("-", "_")}" # e.g. org_1ffac468_7313_4f73_98c5_8935ccfe3896
+			org_db = db_name_for_org(org_id)
 			db.autocommit = True
 			db.execute (f"CREATE DATABASE {org_db} WITH TEMPLATE = new_org_template")
 		except Exception as x:
@@ -44,3 +50,10 @@ def new_org():
 	except Exception as x:
 		abort (400)
 	
+
+
+@bp.delete("<uuid:orgId>")
+def delete_org(orgId):
+	with get_db() as db:
+		db.execute ("DELETE FROM org WHERE id = %s", (orgId,))
+	return ('', 204)

@@ -15,7 +15,7 @@ export class OrgList extends EventTarget
 	constructor()
 	{
 		super()
-		this.#orgs = []
+		this.#orgs = [] // TODO Replace with mapping from id.
 		this.refreshOrgs()
 	}
 
@@ -40,7 +40,28 @@ export class OrgList extends EventTarget
 				}
 			}
 		).then (resp => resp.json())
+		this.#orgs.push (newOrg)
 		this.dispatchEvent(new CustomEvent ("org-added", {detail: newOrg}))
+	}
+
+	async deleteOrg (orgId)
+	{
+		var resp = await fetch (
+			`api/orgs/${orgId}`,
+			{
+				method: "DELETE"
+			}
+		)
+		if (!resp.ok)
+			throw new Error (resp)
+		var orgs = this.#orgs
+		var idx = orgs.findIndex (x => x.id == orgId)
+		var found = idx >= 0
+		if (!found)
+			return
+		var deletedOrg = orgs[idx]
+		orgs.splice(idx, 1)
+		this.dispatchEvent(new CustomEvent ("org-deleted", {detail: deletedOrg}))
 	}
 }
 
@@ -50,16 +71,21 @@ class OrgListView extends HTMLElement
 {
 	constructor() {
 		super()
+		this.#childrenById = new Map()
 	}
 
-	#orgList
+	#orgList // The OrgList model instance.
 
-	#rowParent
+	#rowParent // The parent element under which to place new instances. getElementById("rows")
+
+	#childrenById
 
 	setup (orglist)
 	{
 		this.#orgList = orglist
 		orglist.addEventListener("org-added", e => this.#addNew(e.detail))
+		orglist.addEventListener("org-deleted", e => this.#remove(e.detail))
+		
 	}
 
 	async connectedCallback() {
@@ -79,6 +105,11 @@ class OrgListView extends HTMLElement
 		var row = document.createElement("bookings-orglistrow")
 		row.setup(org)
 		this.#rowParent.appendChild(row)
+		var id = org.id
+		this.#childrenById.set (id, row)
+		row.addEventListener("delete-requested", e => {
+			this.dispatchEvent(new CustomEvent ("delete-requested", {detail: org}))
+		})
 	}
 
 	#refresh()
@@ -86,6 +117,17 @@ class OrgListView extends HTMLElement
 		var orgs = this.#orgList.getOrgs()
 		for (var org of orgs)
 			this.#addNew(org)
+	}
+
+	#remove (org)
+	{
+		var id = org.id
+		var children = this.#childrenById
+		var row = children.get(id)
+		if (row == null)
+			return
+		children.delete(id)
+		this.#rowParent.removeChild(row)
 	}
 }
 
@@ -109,6 +151,10 @@ class OrgListRow extends HTMLElement
 	{
 		var t = templates.getElementById("row")
 		var clone = t.content.cloneNode(true)
+		var del = clone.getElementById("delete")
+		del.addEventListener("click", e => {
+			this.dispatchEvent(new CustomEvent ("delete-requested"))
+		})
 		clone.getElementById("orgname").value = this.#org.orgname
 		var shadow = this.attachShadow({mode:"open"})
 		shadow.appendChild(clone)

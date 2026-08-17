@@ -23,12 +23,9 @@ class Bootstrap extends HTMLElement
 				throw installation // Catch it below
 
 			this.dispatchEvent(new Event("InstallationDiscovered"))
-			var orgs = await import ("./orglist.js")
-			var model = new orgs.OrgList()
-			var view = document.createElement("bookings-orglist")
-			view.setup (model)
-			view.addEventListener("new-requested", e => model.addNew (e.detail))
-			this.appendChild(view)
+			var controller = await import ("./controller.js").then (mod => new mod.Controller)
+			var model = await import ("./model.js").then (mod => new mod.Model())
+			controller.createView (model, this)
 		}
 		catch (err) {
 			console.log ("Oh dear: ")
