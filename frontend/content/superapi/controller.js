@@ -1,7 +1,5 @@
 "use strict"
 
-import "./model.js"
-
 export class Controller
 {
 	#model
@@ -14,7 +12,7 @@ export class Controller
 	async createView (model, viewParent)
 	{
 		var orgList = await model.getOrgList()
-		await import ("./orglist.js")
+		await import ("./view/OrgListView.js")
 		var view = document.createElement ("bookings-orglist")
 		view.setup(orgList)
 

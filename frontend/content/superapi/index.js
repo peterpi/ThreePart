@@ -24,7 +24,7 @@ class Bootstrap extends HTMLElement
 
 			this.dispatchEvent(new Event("InstallationDiscovered"))
 			var controller = await import ("./controller.js").then (mod => new mod.Controller)
-			var model = await import ("./model.js").then (mod => new mod.Model())
+			var model = await import ("./model/Model.js").then (mod => new mod.Model())
 			controller.createView (model, this)
 		}
 		catch (err) {
