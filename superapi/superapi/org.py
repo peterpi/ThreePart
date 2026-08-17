@@ -56,4 +56,4 @@ def new_org():
 def delete_org(orgId):
 	with get_db() as db:
 		db.execute ("DELETE FROM org WHERE id = %s", (orgId,))
-	return ('', 204)
+	return ({}, 204)
