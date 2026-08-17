@@ -9,8 +9,8 @@ def get_db():
 	if db:
 		return db
 	org = auth.current_user()["org"]
-	orgId = str(org["id"])
-	dbName = f"org_{orgId.replace("-", "_")}"
+	org = str(org) # uuid -> str
+	dbName = f"org_{org.replace("-", "_")}"
 	url = f"postgres://bookings@db/{dbName}"
 	db = psycopg.connect (url, password = "Hello")
 	db.row_factory = psycopg.rows.dict_row

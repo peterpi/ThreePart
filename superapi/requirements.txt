@@ -1,0 +1,7 @@
+debugpy
+flask
+flask_httpauth
+gunicorn
+psycopg
+postgres
+debugpy

@@ -31,7 +31,7 @@ def post_new():
 	name = j["name"] or abort (400)
 	with get_db() as db:
 		try:
-			cur = db.execute ("INSERT INTO service (name, uuid) VALUES (%s, uuidv4()) RETURNING name, uuid", (name,))
+			cur = db.execute ("INSERT INTO service (name) VALUES (%s) RETURNING name, uuid", (name,))
 			row = cur.fetchone()
 			return row
 		except:

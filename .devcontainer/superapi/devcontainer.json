@@ -1,0 +1,20 @@
+{
+	"name" : "SuperAPI DevContainer",
+
+	"dockerComposeFile" : [
+		"../../compose.yaml",
+		"docker-compose.yml"
+	],
+
+	"service" : "superapi",
+
+	"workspaceFolder": "/workspace",
+
+
+	"customizations": {
+		"vscode": {
+			"extensions" : ["ms-python.python"]
+		}
+	}
+
+}

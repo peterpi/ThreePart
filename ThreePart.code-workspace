@@ -17,6 +17,10 @@
 			"path": "api"
 		},
 		{
+			"name": "superapi",
+			"path": "superapi"
+		},
+		{
 			"name": "db",
 			"path": "db"
 		},
