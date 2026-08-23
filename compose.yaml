@@ -1,12 +1,20 @@
 services:
 
 
+  tenant_index:
+    build: tenant_index
+    volumes:
+      - tenantindex_data:/var/lib/postgresql
+
+
   db:
     build: db
     expose:
       - 5432
     volumes:
       - db-data:/var/lib/postgresql
+
+
 
   api:
     build:
