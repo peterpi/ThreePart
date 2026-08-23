@@ -8,8 +8,6 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
 
-
-
   api:
     build:
       context: api
@@ -34,13 +32,16 @@ services:
       target: dev
     ports:
       - "80:80"
+      - "81:81"
     volumes:
       # Mount the directory from the host, so that edits to the files do not require an image rebuild.
       - ./frontend/content:/usr/share/nginx/html:ro
+      - ./frontend/content_tenant_admin:/opt/tenant_admin/html:ro
     depends_on:
       - api
       - superapi
 
 volumes:
+  tenantindex_data:
   db-data:
 

@@ -6,22 +6,22 @@ export class OrgList extends EventTarget
 
 	#orgs
 
+	// Get the currently-known orgs, WITHOUT a round-trip to the server.
 	getOrgs() {return this.#orgs}
 
 	constructor()
 	{
 		super()
 		this.#orgs = [] // TODO Replace with mapping from id.
-		this.refreshOrgs()
 	}
 
+	// Query the API for the list of orgs and emit an "orgs-refreshed" event at the end.
 	async refreshOrgs ()
 	{
 		var resp = await fetch ("api/orgs")
 			.then (resp => resp.json())
 		this.#orgs = resp.orgs
 		this.dispatchEvent(new Event ("orgs-refreshed"))
-		return resp.orgs
 	}
 
 	async addNew (args)

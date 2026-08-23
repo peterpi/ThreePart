@@ -20,12 +20,11 @@ class OrgListView extends HTMLElement
 	{
 		this.#orgList = orglist
 		orglist.addEventListener("org-added", e => this.#addNew(e.detail))
-		orglist.addEventListener("org-deleted", e => this.#remove(e.detail))
-		
+		orglist.addEventListener("org-deleted", e => this.#removeById(e.detail.id))
+		orglist.addEventListener("orgs-refreshed", e => this.#refreshFromModel())
 	}
 
 	async connectedCallback() {
-
 		var clone = templates.getElementById("orglist").content.cloneNode(true)
 		this.#rowParent = clone.getElementById("rows")
 		clone.getElementById("newrow").addEventListener("new-requested", e => {
@@ -33,7 +32,7 @@ class OrgListView extends HTMLElement
 		})
 		var shadow = this.attachShadow({mode:"closed"})
 		shadow.appendChild(clone)
-		this.#orgList.addEventListener ("orgs-refreshed", _ => this.#refresh())
+		this.#refreshFromModel() // In case the model already has orgs.
 	}
 
 	#addNew (org)
@@ -48,16 +47,21 @@ class OrgListView extends HTMLElement
 		})
 	}
 
-	#refresh()
+	#clear()
 	{
+		this.#childrenById.keys().forEach(id => this.#removeById (id))
+	}
+
+	#refreshFromModel()
+	{
+		this.#clear();
 		var orgs = this.#orgList.getOrgs()
 		for (var org of orgs)
 			this.#addNew(org)
 	}
 
-	#remove (org)
+	#removeById (id)
 	{
-		var id = org.id
 		var children = this.#childrenById
 		var row = children.get(id)
 		if (row == null)

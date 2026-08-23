@@ -12,7 +12,9 @@ CREATE TABLE installation (
 
 CREATE TABLE org (
 	id UUID PRIMARY KEY default gen_random_uuid(),
-	orgname TEXT NOT NULL UNIQUE
+	orgname TEXT NOT NULL UNIQUE,
+	dbHost TEXT NOT NULL,
+	dbName TEXT NOT NULL
 );
 
 CREATE TABLE org_account_membership (

@@ -16,6 +16,8 @@ export class Controller
 		var view = document.createElement ("bookings-orglist")
 		view.setup(orgList)
 
+		orgList.refreshOrgs()
+
 
 		view.addEventListener("new-requested", e => orgList.addNew (e.detail))
 
