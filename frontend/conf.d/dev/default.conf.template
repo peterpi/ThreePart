@@ -14,12 +14,5 @@ server {
 		proxy_set_header X-Forwarded-Host $host;
 		proxy_set_header X-Forwarded-Prefix $http_x_forwarded_prefix;
 	}
-
-	location /superapi/api/ {
-		proxy_pass http://superapi:5000/;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
-		proxy_set_header X-Forwarded-Host $host;
-		proxy_set_header X-Forwarded-Prefix $http_x_forwarded_prefix;
-	}
 }
+
