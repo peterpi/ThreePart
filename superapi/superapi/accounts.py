@@ -1,0 +1,29 @@
+from flask import Blueprint, abort, request
+from .db import get_db
+
+bp = Blueprint ("accounts", __name__, url_prefix="/accounts")
+
+
+@bp.get("")
+def get_all():
+	with get_db() as db:
+		cur = db.execute("SELECT id, email FROM account")
+		accounts = list(map (lambda x : dict(x), cur.fetchall()))
+		return {"accounts": accounts}
+
+@bp.post("")
+def new_user():
+	j = request.json or abort (400)
+	email = j["email"] or abort (400)
+	with get_db() as db:
+		cur = db.execute ("INSERT INTO account(email) VALUES (%s) RETURNING id,email", (email,))
+		db.commit()
+		row = cur.fetchone()
+		return dict(row)
+
+@bp.get("/<string:email>")
+def get_by_email(email):
+	with get_db() as db:
+		cur = db.execute ("SELECT * FROM account WHERE email = %s", (email,))
+		row = cur.fetchone() or abort(404)
+		return dict(row)

@@ -9,32 +9,33 @@ class Bootstrap extends HTMLElement
 {
 	constructor() {super()}
 
+
+	async #showInstallation ()
+	{
+		var controller = await import ("./controller.js").then (mod => new mod.Controller())
+		var model = await import ("./model/Model.js").then (mod => new mod.Model())
+		controller.createView (model, this)
+	}
+
 	async connectedCallback()
 	{
 		try
 		{
-			var installation 
 			var resp = await fetch ("api/installation")
 			if (!resp.ok)
-				throw new Error ("No Installation"); // See catch below.
-			var installation = (await resp.json()).installation
-			console.log ("Got")
-			if (!installation.id)
-				throw installation // Catch it below
-
-			this.dispatchEvent(new Event("InstallationDiscovered"))
-			var controller = await import ("./controller.js").then (mod => new mod.Controller)
-			var model = await import ("./model/Model.js").then (mod => new mod.Model())
-			controller.createView (model, this)
+				throw resp
+			var j = await resp.json()
+				.then (j => j.id)
+			this.#showInstallation()
 		}
 		catch (err) {
-			console.log ("Oh dear: ")
-			console.log (err)
+			console.log ("Installation not found.")
 			var create = document.createElement("bookings-createinstallation")
 			this.appendChild(create)
-			this.dispatchEvent(new Event("NoInstallation"))
+			create.addEventListener("created-installation", _ => this.#showInstallation())
 		}
 	}
+
 }
 
 
@@ -61,13 +62,16 @@ class CreateInstallation extends HTMLElement
 		var req = {
 			email:email
 		}
-		await fetch ("api/installation",{
+		var id = await fetch ("api/installation",{
 			method:"POST",
 			body: JSON.stringify(req),
 			headers:{
 				"Content-Type" : "application/json"
 			}
 		})
+		.then (resp => resp.json())
+		.then (j => j.id)
+		this.dispatchEvent(new CustomEvent("created-installation", {detail: id}))
 	}
 }
 

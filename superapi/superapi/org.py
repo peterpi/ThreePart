@@ -20,6 +20,7 @@ def get_some():
 
 
 
+
 @bp.post("")
 def new_org():
 	db = get_db()

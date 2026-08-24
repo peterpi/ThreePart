@@ -1,0 +1,32 @@
+<html>
+
+<head>
+	<template id="account-list">
+		<div>
+			<section>Accounts</section>
+			<div id="rows">
+			</div>
+
+			<tenant-admin-accountlist-new id="new"/>
+		</div>
+	</template>
+
+	<template id="account-list-row">
+		<div>
+			<input id="email" type="text" disabled />
+			<label for="email">email</label>
+			<button id="delete">Delete</button>
+		</div>
+	</template>
+
+
+	<template id="account-list-new">
+		<div>
+			<input type="text" id="email"/>
+			<label for="email">email</label>
+			<button id="submit">Submit</button>
+		</div>
+	</template>
+</head>
+
+</html>

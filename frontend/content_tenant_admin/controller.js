@@ -27,6 +27,15 @@ export class Controller
 		})
 
 		viewParent.append(view)
+
+		/** @type{AccountList} */
+		var accountList = await model.getAccountList()
+		await import ("./view/AccountListView.js")
+		var accountListView = document.createElement("tenant-admin-accountlist")
+		accountListView.setup(accountList)
+		viewParent.append(accountListView)
+		accountListView.addEventListener("new-requested", e => accountList.registerNewUser(e.detail))
+		accountList.getAll()
 	}
 
 }

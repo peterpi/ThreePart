@@ -13,6 +13,9 @@ def create_app():
 	from . import org
 	app.register_blueprint(org.bp, url_prefix="/orgs")
 
+	from . import accounts
+	app.register_blueprint(accounts.bp)
+
 	@app.route("/")
 	def hello():
 		return "Hello from superapi"

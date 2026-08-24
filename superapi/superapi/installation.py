@@ -12,10 +12,8 @@ def get_installation_uuid():
 	db = get_db()
 	row = db.execute ("SELECT id FROM INSTALLATION").fetchone()
 	if not row:
-		return {}
-	return {
-		"installation": dict(row)
-	}
+		abort (404)
+	return dict(row)
 	
 
 @bp.post("")
@@ -27,8 +25,8 @@ def bootstrap_new_installation():
 		cur = db.execute("INSERT INTO account (email) values (%s) RETURNING id", (email,))
 		superuserId = cur.fetchone()["id"]
 		cur = db.execute("INSERT INTO installation (superuser) VALUES (%s) RETURNING id", (superuserId,))
-		installationId = cur.fetchone()["id"]
+		row = cur.fetchone()
 		db.commit()
-		return {"id":installationId}
+		return dict(row)
 	except Exception as x:
 		abort(400)

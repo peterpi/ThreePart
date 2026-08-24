@@ -27,6 +27,9 @@
 		{
 			"name": "db_updater",
 			"path": "db_updater"
+		},
+		{
+			"path": "tenant_index"
 		}
 	],
 	"settings": {}

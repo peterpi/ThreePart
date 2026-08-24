@@ -1,5 +1,4 @@
 
-
 export class Model extends EventTarget
 {
 
@@ -17,5 +16,14 @@ export class Model extends EventTarget
 		return orgList
 	}
 
+	/** @type {AccountList} */
+	#accountList
+
+	async getAccountList()
+	{
+		if (!this.#accountList)
+			this.#accountList = await import ("./AccountList.js").then (mod => new mod.AccountList())
+		return this.#accountList
+	}
 
 }

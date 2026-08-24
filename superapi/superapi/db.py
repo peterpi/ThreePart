@@ -8,8 +8,8 @@ def get_db():
 	db = g.get("db")
 	if db:
 		return db
-	url = f"postgres://bookings@db/bookings-orgs"
-	db = psycopg.connect(url, password = "Hello")
+	url = f"postgres://superapi@tenant_index/tenant-index"
+	db = psycopg.connect(url, password = "hello")
 	db.row_factory = psycopg.rows.dict_row
 	g.db = db
 	return db
