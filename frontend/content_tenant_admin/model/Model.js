@@ -26,4 +26,13 @@ export class Model extends EventTarget
 		return this.#accountList
 	}
 
+	async getAccountMembershipModel (account)
+	{
+		if (!account)
+			throw new Error ("No account given.")
+		var mod = await import ("./AccountOrgMembership.js")
+		var model = new mod.AccountOrgMembership(account)
+		return model
+	}
+
 }

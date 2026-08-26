@@ -12,9 +12,9 @@ class Bootstrap extends HTMLElement
 
 	async #showInstallation ()
 	{
-		var controller = await import ("./controller.js").then (mod => new mod.Controller())
 		var model = await import ("./model/Model.js").then (mod => new mod.Model())
-		controller.createView (model, this)
+		var controller = await import ("./controller.js").then (mod => new mod.Controller(model, this))
+		controller.createView ()
 	}
 
 	async connectedCallback()

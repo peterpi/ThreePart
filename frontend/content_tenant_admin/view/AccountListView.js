@@ -48,8 +48,12 @@ export class AccountListView extends HTMLElement
 	 */
 	#addAccountView (account)
 	{
+		var acctId = account.id
 		var row = document.createElement("tenant-admin-accountlist-row")
 		row.setup (account)
+		row.addEventListener("membership-view-requested", _ => {
+			this.dispatchEvent(new CustomEvent ("membership-view-requested", {detail: {account: acctId}}))
+		})
 		this.#rowsParent.appendChild(row)
 	}
 }
@@ -77,6 +81,10 @@ class AccountListRow extends HTMLElement
 	{
 		var clone = templates.getElementById("account-list-row").content.cloneNode(true)
 		clone.getElementById("email").value = this.#account.email
+		var membershipButton = clone.getElementById("memberships")
+		membershipButton.addEventListener("click", _ => {
+			this.dispatchEvent (new CustomEvent ("membership-view-requested"))
+		})
 		var shadow = this.attachShadow({mode:"closed"})
 		shadow.appendChild(clone)
 	}
