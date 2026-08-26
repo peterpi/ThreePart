@@ -12,10 +12,15 @@ CREATE TABLE installation (
 
 CREATE TABLE dbHost (
 	id SERIAL PRIMARY KEY,
-	hostname TEXT NOT NULL UNIQUE
+	hostname TEXT NOT NULL UNIQUE,
+
+	db TEXT NOT NULL,
+	username TEXT NOT NULL,
+	pass TEXT NOT NULL
 );
 
-INSERT INTO dbHost (hostname) VALUES ('db');
+-- Eventually this might be more complex.
+INSERT INTO dbHost (hostname, db, username, pass) VALUES ('db', 'postgres', 'bookings', 'Hello');
 
 
 CREATE TABLE org (

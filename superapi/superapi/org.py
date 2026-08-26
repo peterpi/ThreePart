@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, request
 from .auth import auth
 from .db import get_db
+import uuid
 
 import psycopg
 
@@ -26,25 +27,28 @@ def new_org():
 	db = get_db()
 	j = request.json
 	try:
-		name = j["name"]
-		cur = db.execute ("INSERT INTO org (orgname) VALUES (%s) RETURNING *", (name,))
+		name = j["name"] or abort (400)
+		dbHost = 1 # Eventually we'll choose a host to serve this new org.
+		id = uuid.uuid4()
+		dbName = f"org_{str(id).replace("-", "_")}"
+		cur = db.execute (
+			"INSERT INTO org (id, orgname, dbHost, dbName) VALUES (%s, %s, %s, %s) RETURNING orgname, id",
+			 (str(id), name, dbHost, dbName))
 		org_row = cur.fetchone()
-		org_id = str(org_row["id"])
 		# The creation of a database cannot happen within a transaction,
 		# so we have to commit the INSERT and then use Python's try/catch
 		# to account for failures in creating the new org's database
 		db.commit()
 		try:
-			# Use the org uuid as part of the database name.
-			# Postgres says that database names must start with a-z,
-			# and also that the "-" in a uuid is invalid.
-			# So:
-			org_db = db_name_for_org(org_id)
-			db.autocommit = True
-			db.execute (f"CREATE DATABASE {org_db} WITH TEMPLATE = new_org_template")
+			host = db.execute ("SELECT * FROM dbHost WHERE id = %s", (dbHost,)).fetchone()
+			url = f"postgres://{host["username"]}:{host["pass"]}@{host["hostname"]}/{host["db"]}"
+			template = "new_org_template"
+			with psycopg.connect(url, autocommit=True) as db2:
+				db2.execute (f"CREATE DATABASE {dbName} WITH TEMPLATE = {template}")
+				db2.commit()
 		except Exception as x:
 			db.rollback()
-			db.execute ("DELETE FROM org WHERE id = %s", (org_id,))
+			db.execute ("DELETE FROM org WHERE id = %s", (id,))
 			db.commit()
 			raise x
 		return dict(org_row)

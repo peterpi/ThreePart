@@ -16,10 +16,14 @@ def new_user():
 	j = request.json or abort (400)
 	email = j["email"] or abort (400)
 	with get_db() as db:
-		cur = db.execute ("INSERT INTO account(email) VALUES (%s) RETURNING id,email", (email,))
-		db.commit()
+		try :
+			cur = db.execute ("INSERT INTO account(email) VALUES (%s) RETURNING id,email", (email,))
+			db.commit()
+		except Exception as x:
+			abort (400)
 		row = cur.fetchone()
 		return dict(row)
+
 
 @bp.get("/<string:email>")
 def get_by_email(email):
