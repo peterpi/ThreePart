@@ -16,7 +16,7 @@ def create_app():
 	from . import accounts
 	app.register_blueprint(accounts.bp)
 
-	@app.route("/")
+	@app.route("/healthcheck")
 	def hello():
 		return "Hello from superapi"
 

@@ -18,7 +18,7 @@ ENTRYPOINT ["gunicorn", "--access-logfile", "-"]
 CMD ["-b", "0.0.0.0:5000", "myapp:create_app()"]
 EXPOSE 5000
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl localhost:5000" ]
+HEALTHCHECK --interval=1m --timeout=30s --start-period=30s --start-interval=1s --retries=3 CMD curl -f localhost:5000/hello
 
 FROM base AS dev
 RUN pip install pytest

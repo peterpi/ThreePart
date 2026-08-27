@@ -49,8 +49,10 @@ services:
       - ./frontend/content:/usr/share/nginx/html:ro
       - ./frontend/content_tenant_admin:/opt/tenant_admin/html:ro
     depends_on:
-      - api
-      - superapi
+      api:
+        condition: service_healthy
+      superapi:
+        condition: service_healthy
 
 volumes:
   tenantindex_data:
