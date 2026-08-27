@@ -31,8 +31,8 @@ CREATE TABLE org (
 );
 
 CREATE TABLE org_account_membership (
-	org UUID NOT NULL REFERENCES org(id),
-	account UUID NOT NULL REFERENCES account(id),
+	org UUID NOT NULL REFERENCES org(id) ON DELETE CASCADE, -- ?
+	account UUID NOT NULL REFERENCES account(id) ON DELETE RESTRICT,
 	since TIMESTAMP NOT NULL DEFAULT now(),
 	UNIQUE (org, account)
 );
