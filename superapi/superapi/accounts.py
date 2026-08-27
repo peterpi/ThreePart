@@ -1,6 +1,8 @@
 from flask import Blueprint, abort, request
 from .db import get_db
 
+import psycopg.errors
+
 bp = Blueprint ("accounts", __name__, url_prefix="/accounts")
 
 
@@ -38,6 +40,22 @@ def get_by_email(email):
 def get_memberships_by_id(id):
 	with get_db() as db:
 		#id = str(id)
-		cur = db.execute ("SELECT id, orgname FROM org_account_membership JOIN org ON org = id WHERE account = %s", (id,))
+		cur = db.execute ("SELECT id, orgname, since FROM org_account_membership JOIN org ON org = id WHERE account = %s", (id,))
 		memberships = list(map (lambda x : dict(x), cur.fetchall()))
 		return {"memberships": memberships}
+
+@bp.post("/<string:id>/orgmemberships")
+def post_new_membership(id):
+	body = request.json
+	orgId = body["orgId"] or abort (404)
+	with get_db() as db:
+		try:
+			db.execute (
+				"INSERT INTO org_account_membership(account, org) VALUES (%s, %s)",
+				(id, orgId))
+			db.commit()
+			return {orgId:orgId} # TODO id, orgName in exactly the same format as the GET above
+		except psycopg.errors.UniqueViolation:
+			abort (409)
+		except Exception as x:
+			abort (400)

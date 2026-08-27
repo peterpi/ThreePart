@@ -22,6 +22,16 @@ export class OrgList extends EventTarget
 			.then (resp => resp.json())
 		this.#orgs = resp.orgs
 		this.dispatchEvent(new Event ("orgs-refreshed"))
+		// Might as well return this list
+		return this.getOrgs()
+	}
+
+	async refreshOrgsIfNotAlready()
+	{
+		if (this.#orgs.length > 0)
+			return
+		var orgs = await this.refreshOrgs()
+		return orgs
 	}
 
 	async addNew (args)

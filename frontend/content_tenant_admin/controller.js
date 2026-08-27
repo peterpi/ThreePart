@@ -50,10 +50,19 @@ export class Controller
 
 	async #showAccountMembershipView (account)
 	{
-		var model = await this.#model.getAccountMembershipModel(account)
 		await import ("./view/AccountOrgMembershipView.js")
 		var view = document.createElement("tenant-admin-account-org-memberships")
-		view.setup (model)
+		view.setup (this.#model, account)
+		view.addEventListener("new-requested", async e => {
+			var accountId = e.detail.accountId
+			console.assert(accountId == account)
+			var orgId = e.detail.orgId
+			var membershipModel = await this.#model.getAccountMembershipModel(account)
+			await membershipModel.addMembership(orgId)
+		})
+		view.addEventListener("back-requested", _ => view.remove())
 		this.#viewParent.appendChild(view)
 	}
+
+
 }

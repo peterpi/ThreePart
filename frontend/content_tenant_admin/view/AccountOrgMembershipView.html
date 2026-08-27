@@ -14,6 +14,9 @@
 
 				</table>
 
+				<div id="new"></div>
+
+				<button id="back">Back</button>
 			</div>
 
 		</template>
@@ -25,6 +28,16 @@
 					<button id="remove">Del</button>
 				</td>
 			</tr>
+		</template>
+
+		<template id="new">
+			<div>
+				<section>Add as member of:</section>
+				<label for="orgname">Organization</label>
+				<input type="text" id="orgname" list="orgs" />
+				<datalist id="orgs"></datalist>
+				<button id="submit">Submit</button>
+			</div>
 		</template>
 	</head>
 </html>

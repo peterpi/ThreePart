@@ -21,3 +21,4 @@ CREATE TABLE org_account_membership (
 	org UUID NOT NULL REFERENCES org(id),
 	account UUID NOT NULL REFERENCES account(id)
 );
+-- TODO combination of org+account must be unique.
