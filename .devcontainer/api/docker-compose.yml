@@ -9,3 +9,11 @@ services:
     # Overrides default command so things don't shut down after the process ends.
     entrypoint: [] # https://docs.docker.com/reference/compose-file/services/#entrypoint
     command: sleep infinity
+
+    # Disable the healthcheck, (actually don't disable it, but make it pass immediately)
+    # otherwise the container tries to curl itself even before we've started debugging.
+    healthcheck:
+      start_period: 1m
+      start_interval: 1s
+      test: "true"
+      # That's the bash command "true", which immediately succeeds.
