@@ -1,24 +1,60 @@
 
-CREATE TABLE account (
-	id uuid primary key default gen_random_uuid(),
-	email text unique not null
+
+-- e.g. if a business has many locations
+CREATE TABLE location (
+	name TEXT NOT NULL UNIQUE,
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid()
 );
 
-CREATE TABLE installation (
-	id uuid primary key default gen_random_uuid(),
-	superuser UUID NOT NULL REFERENCES account(id)
+CREATE TABLE staff (
+	id SERIAL PRIMARY KEY,
+	uuid UUID NOT NULL UNIQUE, -- no default, it comes from account(id) from the tenant index
+	email text not null unique
+);
+
+CREATE TABLE role (
+	name text not null unique
+);
+
+CREATE TABLE staff_role (
+	staff integer not null references staff(id)
 );
 
 
-CREATE TABLE org (
-	id UUID PRIMARY KEY default gen_random_uuid(),
-	orgname TEXT NOT NULL UNIQUE,
-	dbHost TEXT NOT NULL,
-	dbName TEXT NOT NULL
+
+-- e.g. "Manicure"
+CREATE TABLE service (
+	id INTEGER PRIMARY KEY,
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+	name TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE org_account_membership (
-	org UUID NOT NULL REFERENCES org(id),
-	account UUID NOT NULL REFERENCES account(id)
+
+
+-- e.g. "During December, Manicure and Pedicure for $60"
+CREATE TABLE offer (
+	id INTEGER PRIMARY KEY,
+	name TEXT NOT NULL,
+	price MONEY NOT NULL, -- This is the default; the caller can specify it per-sale in sale_line.
+	startTime TIMESTAMP NOT NULL,
+	endTime TIMESTAMP
 );
--- TODO combination of org+account must be unique.
+
+-- lines for "Manicure" and "Pedicure" in the offer example above.
+CREATE TABLE offer_service (
+	offer INTEGER REFERENCES offer(id) ON DELETE CASCADE,
+	sku INTEGER REFERENCES service(id) ON DELETE CASCADE,
+	UNIQUE (offer, sku)
+);
+
+CREATE TABLE sale (
+	id INTEGER PRIMARY KEY,
+	uuid UUID NOT NULL default gen_random_uuid(),
+	time TIMESTAMP NOT NULL DEFAULT 'now'
+);
+
+CREATE TABLE sale_line (
+	sale INTEGER NOT NULL REFERENCES sale(id) ON DELETE CASCADE,
+	offer INTEGER NOT NULL REFERENCES offer(id) ON DELETE RESTRICT,
+	price MONEY NOT NULL -- Application defaults this to offer(price)
+)

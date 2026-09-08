@@ -20,7 +20,7 @@ CREATE TABLE dbHost (
 );
 
 -- Eventually this might be more complex.
-INSERT INTO dbHost (hostname, db, username, pass) VALUES ('db', 'postgres', 'bookings', 'Hello');
+INSERT INTO dbHost (hostname, db, username, pass) VALUES ('db', 'bookings-template', 'bookings', 'Hello');
 
 
 CREATE TABLE org (
