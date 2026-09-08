@@ -8,6 +8,7 @@ def get_db():
 	db = g.get("db")
 	if db:
 		return db
+	user = auth.current_user()
 	org = auth.current_user()["org"]
 	org = str(org) # uuid -> str
 	dbName = f"org_{org.replace("-", "_")}"
