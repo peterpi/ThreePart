@@ -1,7 +1,6 @@
 import psycopg
 import psycopg.rows
 
-# TODO Investigate this higher-level library: https://pypi.org/project/postgres/
 
 def get_db ():
 	url = f"postgres://bookings@db/bookings-orgs"
