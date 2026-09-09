@@ -13,4 +13,12 @@ login.addEventListener("logged-in", _ => {
 			var main = new m.MainMenu()
 			document.body.appendChild(main.view)
 		})
+	import ("./controller/Controller.js")
+		.then (async m => {
+			var model = await import ("./model/Model.js")
+				.then (x => new x.Model())
+			var ctrlr = new m.Controller(document.body, model)
+			model.getServices()
+				.then (services => ctrlr.viewServiceList (services))
+		})
 })

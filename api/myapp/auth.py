@@ -12,7 +12,9 @@ def _verify(username, password):
 	if u:
 		return u
 	with orgindex.get_db() as db:
-		cur = db.execute ("SELECT org.id AS org, account.email AS email FROM org JOIN org_account_membership ON org.id = org_account_membership.org JOIN account on account.id = org_account_membership.account WHERE account.email = %s", (username,))
+		# Lots of joins here.
+		# Find the account and then join that to org_account_membership, org, and finally dbhost
+		cur = db.execute ("SELECT account.id, org.orgname, org.dbname, dbhost.hostname AS dbhostname, dbhost.username AS dbuser, dbhost.pass  FROM account JOIN org_account_membership ON account.id = org_account_membership.account JOIN org on org_account_membership.org = org.id JOIN dbhost on org.dbhost = dbhost.id WHERE account.email = %s", (username,))
 		user = cur.fetchone()
 		if not user:
 			return False

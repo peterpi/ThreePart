@@ -34,7 +34,7 @@ def post_new():
 			cur = db.execute ("INSERT INTO service (name) VALUES (%s) RETURNING name, uuid", (name,))
 			row = cur.fetchone()
 			return row
-		except:
+		except Exception as x:
 			abort (400) # Blame the user :p
 
 @bp.put("<uuid:uuid>")
