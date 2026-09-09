@@ -42,9 +42,9 @@ def new_org():
 		try:
 			host = db.execute ("SELECT * FROM dbHost WHERE id = %s", (dbHost,)).fetchone()
 			url = f"postgres://{host["username"]}:{host["pass"]}@{host["hostname"]}/{host["db"]}"
-			template = "new_org_template"
+			template = host["db"]
 			with psycopg.connect(url, autocommit=True) as db2:
-				db2.execute (f"CREATE DATABASE {dbName} WITH TEMPLATE = {template}")
+				db2.execute (f"CREATE DATABASE {dbName} WITH TEMPLATE = '{template}'")
 				db2.commit()
 		except Exception as x:
 			db.rollback()
