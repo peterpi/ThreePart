@@ -14,7 +14,7 @@ CREATE TABLE dbHost (
 	id SERIAL PRIMARY KEY,
 	hostname TEXT NOT NULL UNIQUE,
 
-	db TEXT NOT NULL,
+	db TEXT NOT NULL, -- This is the template that we'll clone to generate org(dbName)
 	username TEXT NOT NULL,
 	pass TEXT NOT NULL
 );
