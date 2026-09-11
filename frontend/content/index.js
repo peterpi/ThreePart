@@ -19,6 +19,9 @@ login.addEventListener("logged-in", _ => {
 				.then (x => new x.Model())
 			var ctrlr = new m.Controller(document.body, model)
 			model.getServices()
-				.then (services => ctrlr.viewServiceList (services))
+				.then (services => {
+					ctrlr.viewServiceList (services)
+					ctrlr.viewOffers()
+				})
 		})
 })

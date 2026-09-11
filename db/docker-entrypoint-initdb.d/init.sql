@@ -37,6 +37,7 @@ CREATE TABLE service (
 -- e.g. "During December, Manicure and Pedicure for $60"
 CREATE TABLE offer (
 	id SERIAL PRIMARY KEY,
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
 	name TEXT NOT NULL,
 	duration INTERVAL NOT NULL,
 	price MONEY NOT NULL, -- This is the default; the caller can specify it per-sale in sale_line.
@@ -49,6 +50,7 @@ CREATE TABLE offer_service (
 	offer INTEGER REFERENCES offer(id) ON DELETE CASCADE,
 	sku INTEGER REFERENCES service(id) ON DELETE CASCADE,
 	UNIQUE (offer, sku)
+	-- TODO ordering.
 );
 
 

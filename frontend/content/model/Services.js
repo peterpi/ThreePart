@@ -36,6 +36,8 @@ class Service extends EventTarget
 	{
 		return this.#uuid
 	}
+
+	get uuid() {return this.getUuid()}
 };
 
 
@@ -71,6 +73,16 @@ export class ServiceList extends EventTarget
 			.then (resp => resp.json())
 			.then (j => new ServiceList(j))
 		return serviceList
+	}
+
+	getByUuid (uuid)
+	{
+		if (!uuid)
+			throw new Error ("Null UUID")
+		var s = this.#services.get(uuid)
+		if (!s)
+			throw new Error (`No such service: ${uuid}`)
+		return s
 	}
 
 	async postNew (details)

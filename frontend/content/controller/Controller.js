@@ -28,4 +28,11 @@ export class Controller{
 			.then (mod => new mod.ServiceListController())
 		c.viewServiceList(serviceList, this.#viewParent)
 	}
+
+	async viewOffers ()
+	{
+		var c = await import ("./OffersEditorController.js")
+			.then (mod => new mod.OffersEditorController())
+		c.viewOffers(this.#model, this.#viewParent)
+	}
 }
