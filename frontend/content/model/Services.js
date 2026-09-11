@@ -73,12 +73,14 @@ export class ServiceList extends EventTarget
 		return serviceList
 	}
 
-	async postNew (j)
+	async postNew (details)
 	{
+		if (!details)
+			throw new Error ("No details given.")
 		var url = "/api/services"
 		var j = await fetch (url, {
 			method:"POST",
-			body:j,
+			body:JSON.stringify(details),
 			headers:{"Content-Type":"application/json"}
 		})
 			.then (resp => resp.json())
