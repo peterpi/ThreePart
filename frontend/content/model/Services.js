@@ -86,7 +86,22 @@ export class ServiceList extends EventTarget
 			.then (resp => resp.json())
 		var service = new Service(j)
 		this.#services.set (service.getUuid(), service)
-		this.dispatchEvent(new CustomEvent ("service-added", {detail:service}))
+		this.dispatchEvent(new CustomEvent ("service-added", {detail:{service:service}}))
+	}
+
+	async delete (service)
+	{
+		if (!service)
+			throw new Error ("Cannot delete null service.")
+		var uuid = service.getUuid()
+		var url = `/api/services/${uuid}`
+		var resp = await fetch (url, {
+			method:"DELETE"
+		})
+		if (!resp.ok)
+			throw new Error ("Service deletion failed.")
+		this.#services.delete(uuid) // Don't care if it was ever present.
+		this.dispatchEvent(new CustomEvent ("service-deleted", {detail:{uuid:uuid}}))
 	}
 
 	forEach (cb)

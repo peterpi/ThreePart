@@ -51,3 +51,11 @@ def put_existing(uuid):
 		if not row:
 			abort (404)
 		return row
+
+@bp.delete("<uuid:uuid>")
+@auth.login_required
+def delete (uuid):
+	uuid = str(uuid)
+	with get_db() as db:
+		db.execute ("DELETE FROM service WHERE uuid = %s", (uuid,))
+	return ({}, 204)

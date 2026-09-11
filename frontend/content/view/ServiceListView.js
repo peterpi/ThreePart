@@ -6,27 +6,6 @@ var templates = await fetch (new URL ("ServiceListView.html", import.meta.url))
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
 
-class ServiceListRow extends EventTarget
-{
-
-	constructor (ele)
-	{
-		super()
-
-	}
-	/** @type Service */
-	#service
-
-	setup (service) {this.#service = service}
-
-	connectedCallback()
-	{
-		var name = document.createElement("td")
-		name.textContent = this.#service.getName()
-		this.appendChild(name)
-	}
-}
-
 
 export class ServiceListView extends HTMLElement
 {
@@ -37,8 +16,8 @@ export class ServiceListView extends HTMLElement
 	/** @type HTMLElement */
 	#rowParent
 
-	/** @type Map<Service,ServiceListRow> */
-	#rowsByService
+	/** @type Map<Service,HTMLElement> */
+	#rowsByServiceUuid
 
 	/** @type HTMLDivElement */
 	#newBox
@@ -47,7 +26,7 @@ export class ServiceListView extends HTMLElement
 	{
 		if (!model)
 			throw new Error ("Need model parameter.")
-		this.#rowsByService = new Map()
+		this.#rowsByServiceUuid = new Map()
 		this.#serviceList = model
 	}
 
@@ -73,26 +52,42 @@ export class ServiceListView extends HTMLElement
 		var shadow = this.attachShadow({mode:"open"})
 		shadow.appendChild(clone)
 
-		this.#serviceList.addEventListener("service-added", e => this.#addRow(e.detail)) // TODO Does the view have a shorter lifespan than the model?
-		this.#serviceList.forEach (s => this.#addRow(s))
-
-
+		var serviceList = this.#serviceList
+		serviceList.addEventListener("service-added", e => this.#addRow(e.detail.service))
+		serviceList.forEach (s => this.#addRow(s))
+		serviceList.addEventListener("service-deleted", e => this.#removeRowForService(e.detail.uuid))
 	}
 
-	disconnectedCallback()
-	{
-		this.#serviceList.addEventListener("service-added", this.#addRow)
+
+	#addRowForEvent (evt) {
+		this.#addRow(evt.detail)
 	}
 
 	#addRow (service)
 	{
-		var t = templates.getElementById("service-list-row")
-		var clone = document.importNode(t.content, true)
-		var tdName = clone.querySelector ("td.name")
+		var rowTemplate = templates.getElementById("service-list-row")
+		var clone = document.importNode(rowTemplate.content, true)
+		var tr = clone.querySelector("tr")
+		var tdName = tr.querySelector ("td.name")
 		var name = service.getName()
 		tdName.innerText = name
-		this.#rowParent.appendChild(clone)
-		this.#rowsByService.set(service,clone)
+		tr.querySelector("button.del").addEventListener("click", e => {
+			this.dispatchEvent(new CustomEvent ("del-requested", {detail:{service:service}}))
+		})
+		this.#rowParent.appendChild(tr)
+		var uuid = service.getUuid()
+		this.#rowsByServiceUuid.set(uuid,tr)
+	}
+
+	/** @param {CustomEvent} removalEvent */
+	#removeRowForService (uuid)
+	{
+		var rowsByService = this.#rowsByServiceUuid
+		var row = rowsByService.get(uuid)
+		if (!row)
+			return
+		rowsByService.delete(uuid)
+		row.remove()
 	}
 
 	#requestNew (newBox)

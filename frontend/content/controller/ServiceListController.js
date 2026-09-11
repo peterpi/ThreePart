@@ -8,6 +8,7 @@ export class ServiceListController
 		var view = document.createElement("service-list-view")
 		view.setup(serviceList)
 		view.addEventListener ("new-requested", e => this.#createNew(serviceList, e))
+		view.addEventListener ("del-requested", e => serviceList.delete (e.detail.service))
 		viewParent.appendChild(view)
 	}
 
