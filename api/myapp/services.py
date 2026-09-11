@@ -2,6 +2,7 @@
 from flask import (Blueprint, request, abort)
 from .auth import auth
 from .db import get_db
+import psycopg
 
 bp = Blueprint("services", __name__)
 
@@ -34,6 +35,8 @@ def post_new():
 			cur = db.execute ("INSERT INTO service (name) VALUES (%s) RETURNING name, uuid", (name,))
 			row = cur.fetchone()
 			return row
+		except psycopg.errors.UniqueViolation as dupe:
+			abort (409)
 		except Exception as x:
 			abort (400) # Blame the user :p
 
