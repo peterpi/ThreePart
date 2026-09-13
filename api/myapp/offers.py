@@ -17,7 +17,7 @@ def offer_from_row (row):
 	return o
 
 def service_from_row (row):
-	s = {"name" : row["servicename"]}
+	s = {"name" : row["servicename"], "uuid" : row["serviceuuid"]}
 	return s
 
 @bp.get("")
@@ -27,7 +27,7 @@ def get_all():
 		offers = []
 		offer = None
 		# Get the offers and their services in one hit.
-		cur = db.execute ("SELECT offer.id, offer.uuid, offer.name AS offername, duration, service.name AS servicename FROM offer LEFT OUTER JOIN offer_service ON offer.id = offer_service.offer JOIN service ON offer_service.sku = service.id")
+		cur = db.execute ("SELECT offer.id, offer.uuid, offer.name AS offername, duration, service.uuid AS serviceuuid, service.name AS servicename FROM offer LEFT OUTER JOIN offer_service ON offer.id = offer_service.offer JOIN service ON offer_service.sku = service.id")
 		while True :
 			row = cur.fetchone()
 			if not row:
