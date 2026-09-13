@@ -20,10 +20,19 @@ class Offer extends EventTarget
 	#name
 	get name () {return this.#name}
 
-	constructor (j) {
+	/** @type Service[] */
+	#services
+	get services() {return this.#services}
+
+	constructor (j, serviceList) {
 		super()
 		this.#name = j.name
 		this.#uuid = j.uuid
+		var serviceUuids = j.services.map (s => s.uuid)
+		if (!serviceUuids)
+			serviceUuids = []
+		var services = serviceUuids.map (u => serviceList.getByUuid(u))
+		this.#services = services
 	}
 
 	async addService (s)
@@ -37,7 +46,8 @@ class Offer extends EventTarget
 			headers:{"Content-Type":"application/json"}
 		})
 		if (!resp.ok)
-			throw new Erorr ("Failed to add service to offer.")
+			throw new Error ("Failed to add service to offer.")
+		this.#services.push(s)
 		this.dispatchEvent(new CustomEvent ("service-added", {detail:{service:s}}))
 	}
 
@@ -51,6 +61,9 @@ class Offer extends EventTarget
 		})
 		if (!resp.ok)
 			throw new Error ("Failed to delete service from offer.")
+		var index = this.#services.findIndex(s)
+		if (index >= 0)
+			this.#services.splice(index,1)
 		this.dispatchEvent(new CustomEvent("service-removed", {detail:{service:s}}))
 	}
 }

@@ -13,13 +13,45 @@
 	</template>
 
 
-	<template id="offer-row2">
+	<template id="offer-editor">
 		<div class="offer">
-			<section class="name"></section>
-			<label>Name
-				<input type="text" class="name" value="hello"/>
-			</label>
+			<section class="details">
+				<div>
+				<label>Name
+					<input type="text" class="name" value="hello"/>
+				</label>
+				</div>
+				<div>
+					<label>Duration (minutes)
+						<input type="number" class="duration"/>
+					</label>
+				</div>
+			</section>
+
+
+			<section class="services">
+				<h4>Services</h4>
+
+				<div class="rows-parent"></div>
+			
+				<p class="count"></p>
+				<div class="offer-add-service">
+					<select class="service">
+
+					</select>
+					<button class="submit">Add</button>
+				</div>
+
+			</section>
+
 		</div>
+	</template>
+
+
+	<template id="offer-editor-service-row">
+		<p class="serviceName">
+		</p>
+		<button class="del">Remove</button>
 	</template>
 
 </html>

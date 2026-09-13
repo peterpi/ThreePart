@@ -18,6 +18,7 @@ class Service extends EventTarget
 	getName() {
 		return this.#name
 	}
+	get name() {return this.#name}
 
 	setName (value)
 	{
@@ -46,6 +47,8 @@ export class ServiceList extends EventTarget
 
 	/** @type Map<uuid,Service> */
 	#services
+
+	get size () {return this.#services.size}
 
 	constructor (j)
 	{
