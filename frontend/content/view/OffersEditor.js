@@ -20,6 +20,9 @@ class OfferEditorServiceRow extends HTMLElement
 		var t = templates.getElementById("offer-editor-service-row")
 		var clone = t.content.cloneNode(true)
 		clone.querySelector(".serviceName").textContent = this.#service.name
+		clone.querySelector ("button.del").addEventListener("click", e => {
+			this.dispatchEvent(new CustomEvent ("remove-requested"))
+		})
 		this.appendChild(clone)
 	}
 }
@@ -48,6 +51,8 @@ class OfferEditor extends HTMLElement
 	{
 		console.assert(offer)
 		this.#offer = offer
+		offer.addEventListener("service-added", e => this.#addRowForService(e.detail.service))
+		offer.addEventListener("service-removed", e => this.#removeRowForService(e.detail.service))
 	}
 
 	connectedCallback()
@@ -77,10 +82,30 @@ class OfferEditor extends HTMLElement
 			throw new Error (`Cannot add row for null service.`)
 		var ele = document.createElement("offer-editor-service-row")
 		ele.setup(service)
+		ele.addEventListener("remove-requested", e => {
+			this.dispatchEvent(new CustomEvent ("remove-requested", {detail:{service:service}}))
+		})
 		this.#rowsParent.appendChild(ele)
 		this.#serviceRowsByService.set (service, ele)
+		this.#recalculateNum()
+	}
+
+	#removeRowForService (service)
+	{
+		var rows = this.#serviceRowsByService
+		var ele = rows.get(service)
+		if (!ele)
+			return
+		rows.delete(service)
+		ele.remove()
+		this.#recalculateNum()
+	}
+
+	#recalculateNum ()
+	{
 		var num = this.#offer.services.length
-		this.querySelector("section.services p.count").textContent = `(${num} services)`
+		var s = `(${num} services)`
+		this.querySelector("section.services p.count").textContent = s
 	}
 }
 
@@ -137,6 +162,12 @@ class OffersEditor extends HTMLElement
 	{
 		var row = document.createElement("offer-editor")
 		row.setup(offer)
+		row.addEventListener("remove-requested", e => {
+			this.dispatchEvent(new CustomEvent ("remove-requested", {detail:{
+				offer:offer,
+				service:e.detail.service
+			}}))
+		})
 		this.#rowsParent.appendChild(row)
 		var uuid = offer.uuid
 		this.#rowsByUuid.set (uuid, row)

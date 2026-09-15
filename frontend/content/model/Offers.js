@@ -13,7 +13,8 @@ class Offer extends EventTarget
 	get uuid () {return this.#uuid}
 
 	get baseUrl () {
-		var s = `/api/offsers/${this.uuid}`
+		var s = `/api/offers/${this.uuid}`
+		return s
 	}
 
 	/** @type string */
@@ -61,7 +62,7 @@ class Offer extends EventTarget
 		})
 		if (!resp.ok)
 			throw new Error ("Failed to delete service from offer.")
-		var index = this.#services.findIndex(s)
+		var index = this.#services.indexOf(s)
 		if (index >= 0)
 			this.#services.splice(index,1)
 		this.dispatchEvent(new CustomEvent("service-removed", {detail:{service:s}}))
