@@ -15,6 +15,7 @@ export class OffersEditorController
 		var view = document.createElement("offers-editor")
 		await view.setup (model)
 		view.addEventListener ("remove-requested", e => this.#performRemoval(e))
+		view.addEventListener("addition-requested", e => this.#performAddition(e))
 		parentNode.appendChild(view)
 	}
 
@@ -27,5 +28,9 @@ export class OffersEditorController
 	}
 
 	async #performAddition (evt)
-	{}
+	{
+		var offer = evt.detail.offer
+		var service = evt.detail.service
+		await offer.addService (service)
+	}
 }

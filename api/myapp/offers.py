@@ -50,7 +50,7 @@ def get_all():
 @auth.login_required
 def add_offer_service (offerUuid):
 	offerUuid = str(offerUuid)
-	j = request.json()
+	j = request.json
 	serviceUuid = j["service"]
 	with get_db() as db:
 		try :
@@ -58,7 +58,7 @@ def add_offer_service (offerUuid):
 			num = cur.rowcount
 			if num == 0:
 				abort (404)
-		except psycopg.error.UniqueViolation as x:
+		except psycopg.errors.UniqueViolation as x:
 			abort (409)
 	return ({}, 204)
 

@@ -88,6 +88,16 @@ export class ServiceList extends EventTarget
 		return s
 	}
 
+	getByName (name)
+	{
+		var s = null
+		var idx = this.#services.values.forEach(x => {
+			if (x.name == name)
+				s = x
+		})
+		return s
+	}
+
 	async postNew (details)
 	{
 		if (!details)

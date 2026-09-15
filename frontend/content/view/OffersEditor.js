@@ -4,6 +4,53 @@ var templates = await fetch (new URL("OffersEditor.html", import.meta.url))
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
 
+class OfferEditorAddService extends HTMLElement
+{
+	#serviceList
+
+	setup (serviceList)
+	{
+		if (!serviceList)
+			throw new Error ("Must provide ServiceList.")
+		this.#serviceList = serviceList
+
+		var select = this.querySelector("select.service")
+		serviceList.forEach(s => {
+			var serviceName = s.name
+			var serviceUuid = s.uuid
+			var opt = document.createElement("option")
+			opt.setAttribute("value", serviceUuid)
+			opt.textContent = serviceName
+			select.appendChild(opt)
+		})
+	}
+
+	connectedCallback()
+	{
+		var t = templates.getElementById("offer-editor-add-service")
+		var clone = t.content.cloneNode(true)
+		clone.querySelector("button").addEventListener("click", e => this.#collectAndEmit())
+		this.appendChild(clone)
+	}
+
+	#collectAndEmit()
+	{
+		var uuid = this.querySelector("select.service").value
+		var service = this.#serviceList.getByUuid(uuid)
+		console.assert(service)
+		if (!service)
+			return
+		this.dispatchEvent(
+			new CustomEvent(
+				"addition-requested", {
+					detail:{service:service},
+					bubbles:true
+				}))
+	}
+}
+
+customElements.define("offer-editor-add-service", OfferEditorAddService)
+
 class OfferEditorServiceRow extends HTMLElement
 {
 
@@ -35,6 +82,9 @@ class OfferEditor extends HTMLElement
 	/** @type Offer */
 	#offer
 
+	/** @type ServiceList */
+	#serviceList
+
 	/** @type HTMLElement */
 	#rowsParent
 
@@ -47,10 +97,12 @@ class OfferEditor extends HTMLElement
 		this.#serviceRowsByService = new Map()
 	}
 
-	setup (offer)
+	setup (offer, serviceList)
 	{
 		console.assert(offer)
 		this.#offer = offer
+		console.assert(serviceList)
+		this.#serviceList = serviceList
 		offer.addEventListener("service-added", e => this.#addRowForService(e.detail.service))
 		offer.addEventListener("service-removed", e => this.#removeRowForService(e.detail.service))
 	}
@@ -74,6 +126,10 @@ class OfferEditor extends HTMLElement
 		// Populate using existing offer data
 		var currentServices = this.#offer.services
 		currentServices.forEach (s => this.#addRowForService(s))
+
+		// Set up the add-service box
+		var addSrv = this.querySelector("offer-editor-add-service")
+		addSrv.setup (this.#serviceList)
 	}
 
 	#addRowForService (service)
@@ -161,12 +217,18 @@ class OffersEditor extends HTMLElement
 	#showNew (offer)
 	{
 		var row = document.createElement("offer-editor")
-		row.setup(offer)
+		row.setup(offer, this.#serviceList)
 		row.addEventListener("remove-requested", e => {
 			this.dispatchEvent(new CustomEvent ("remove-requested", {detail:{
 				offer:offer,
 				service:e.detail.service
 			}}))
+		})
+		row.addEventListener("addition-requested", e => {
+			e.stopPropagation()
+			var service = e.detail.service
+			this.dispatchEvent(new CustomEvent(e.type, {
+				detail: {offer:offer, service:service}}))
 		})
 		this.#rowsParent.appendChild(row)
 		var uuid = offer.uuid

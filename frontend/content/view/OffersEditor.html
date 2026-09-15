@@ -35,12 +35,7 @@
 				<div class="rows-parent"></div>
 			
 				<p class="count"></p>
-				<div class="offer-add-service">
-					<select class="service">
-
-					</select>
-					<button class="submit">Add</button>
-				</div>
+				<offer-editor-add-service/>
 
 			</section>
 
@@ -52,6 +47,16 @@
 		<p class="serviceName">
 		</p>
 		<button class="del">Remove</button>
+	</template>
+
+
+	<template id="offer-editor-add-service">
+		<section class="add-service">
+			<select name="service" class="service"></select>
+			<button class="submit">Add</button>
+
+		</section>
+
 	</template>
 
 </html>
