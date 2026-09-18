@@ -70,3 +70,35 @@ CREATE TABLE sale (
 	time TIMESTAMP NOT NULL DEFAULT 'now',
 	cart INTEGER NOT NULL REFERENCES cart(id)
 );
+
+-- A specific, non-repeating period of availability.
+-- e.g. 9am to 12am BST on 6th June 2012
+CREATE TABLE availability (
+	id serial primary key,
+	uuid UUID not null UNIQUE default gen_random_uuid(),
+	startTime time with time zone not null,
+	endTime time with time zone not null
+);
+
+CREATE TABLE staffAvailability (
+	staff integer not null references staff(id) on delete CASCADE,
+	avail integer not null references availability(id) on delete CASCADE,
+	unique (staff, avail)
+);
+
+-- A future availability period for anything (staff, equipment, etc.)
+-- e.g. "Mondays from 9am until 12am"
+CREATE TABLE scheduledAvailability (
+	id serial primary key,
+	dow INTEGER NOT NULL,
+	startTime time without time zone NOT NULL,
+	duration interval not NULL
+	-- storing an interval rather than an endTime allows for e.g. "Mondays, 11pm for 4 hours"
+);
+
+CREATE TABLE staffScheduledAvailability (
+	staff integer not null references staff(id) on delete CASCADE,
+	avail integer not null references scheduledAvailability(id)
+);
+
+-- TODO Trigger deletion of scheduledAvailability 

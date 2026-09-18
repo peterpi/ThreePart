@@ -1,0 +1,36 @@
+
+
+<html>
+	
+	<template id="staff-availability-editor">
+		<section class="header">
+			<span class="staffname">Schedule for whoever</span>
+			<button class="sort">Sort</button>
+		</section>
+
+		<section class="rows">
+
+		</section>
+	</template>
+
+
+	<template id="staff-availability-row">
+		<select class="dow">
+			<option value="1">Monday</option>
+			<option value="2">Tuesday</option>
+			<option value="3">Wednesday</option>
+			<option value="4">Thursday</option>
+			<option value="5">Friday</option>
+			<option value="6">Saturday</option>
+			<option value="7">Sunday</option>
+		</select>
+		<label>Start
+			<input type="time" class="start"/>
+		</label>
+		<label>End
+			<input type="time" class="end"/>
+		</label>
+		<button class="del">Del</button>
+	</template>
+
+</html>

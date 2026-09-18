@@ -25,6 +25,8 @@ def create_app():
 	api.register_blueprint(services.bp, url_prefix="/services")
 	from . import offers
 	api.register_blueprint(offers.bp, url_prefix="/offers")
+	from . import staff
+	api.register_blueprint(staff.bp, url_prefix="/staff")
 
 	a.register_blueprint(api, url_prefix="/")
 

@@ -30,4 +30,17 @@ export class Model
 		}
 		return o
 	}
+
+	#staffList
+
+	async getStaffList()
+	{
+		let s = this.#staffList
+		if (!s) {
+			const mod = await import ("./Staff.js")
+			s = new mod.StaffList()
+			this.#staffList = s
+		}
+		return s
+	}
 }
