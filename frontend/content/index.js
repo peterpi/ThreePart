@@ -5,23 +5,17 @@ var login = document.createElement("bookings-login")
 document.body.appendChild(login)
 
 
-login.addEventListener("logged-in", _ => {
+login.addEventListener("logged-in", async _ => {
 	console.log ("You're in.")
 	login.remove();
-	import ("./main.js")
-		.then (m => {
-			var main = new m.MainMenu()
-			document.body.appendChild(main.view)
-		})
-	import ("./controller/Controller.js")
-		.then (async m => {
-			var model = await import ("./model/Model.js")
-				.then (x => new x.Model())
-			var ctrlr = new m.Controller(document.body, model)
-			model.getServices()
-				.then (services => {
-					ctrlr.viewServiceList (services)
-					ctrlr.viewOffers()
-				})
-		})
+	let main = await import ("./main.js")
+	let mainMenu = new main.MainMenu()
+	document.body.appendChild(mainMenu)
+	let controllerModule = await import ("./controller/Controller.js")
+	let modelModule = await import ("./model/Model.js")
+	let model = new modelModule.Model()
+	let controller = new controllerModule.Controller(document.body, model)
+	let services = await model.getServices()
+	controller.viewServiceList(services)
+	controller.viewOffers(offers)
 })
