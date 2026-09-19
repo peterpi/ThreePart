@@ -31,6 +31,8 @@ class StaffListRow extends HTMLElement
 	}
 }
 
+customElements.define("staff-list-row", StaffListRow)
+
 class StaffListView extends HTMLElement
 {
 
@@ -46,6 +48,12 @@ class StaffListView extends HTMLElement
 		const t = templates.getElementById("staff-list-view")
 		var clone = t.content.cloneNode(true)
 		this.#rowsParent = clone.querySelector("section.rows")
+
+		const newSection = clone.querySelector("section.new")
+		newSection.querySelector("button.submit").addEventListener("click", e => {
+			this.#requestNew(newSection)
+		})
+
 		this.appendChild(clone)
 	}
 
@@ -54,6 +62,7 @@ class StaffListView extends HTMLElement
 		const all = await staffList.getAll()
 		this.#rowsParent.querySelector("progress")?.remove()
 		all.forEach (s => this.#addRow(s))
+		staffList.addEventListener("new-staff", e => this.#addRow(e.detail.staff))
 	}
 
 	#addRow (s)
@@ -61,6 +70,17 @@ class StaffListView extends HTMLElement
 		var row = document.createElement("staff-list-row")
 		row.setup(s)
 		this.#rowsParent.appendChild(row)
+		row.addEventListener("schedule-requested", e => {
+			this.dispatchEvent(new CustomEvent (e.type, {detail:{staff:s}}))
+		})
+	}
+
+	#requestNew (newSection)
+	{
+		const email = newSection.querySelector("input.email").value
+		const name = newSection.querySelector("input.name").value
+		const fields = {email:email,name:name}
+		this.dispatchEvent(new CustomEvent ("new-requested", {detail:{staff:fields}}))
 	}
 }
 

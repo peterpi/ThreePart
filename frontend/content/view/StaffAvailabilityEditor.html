@@ -1,15 +1,32 @@
 
 
 <html>
-	
+
 	<template id="staff-availability-editor">
 		<section class="header">
-			<span class="staffname">Schedule for whoever</span>
+			<span class="staffname">Schedule for <span class="name">whoever</span> (<span class="email"></span>)</span>
 			<button class="sort">Sort</button>
+			<button class="back">Back</button>
 		</section>
+
+		<time-range-picker></time-range-picker>
 
 		<section class="rows">
 
+		</section>
+
+		<section class="new">
+			<h3>New</h3>
+			<label> DOW
+				<input type="number" class="dow"/>
+			</label>
+			<label>Start
+				<input type="time" class="start"/>
+			</label>
+			<label>End
+				<input type="time" class="start"/>
+			</label>
+			<button class="submit">Add</button>
 		</section>
 	</template>
 
@@ -33,4 +50,23 @@
 		<button class="del">Del</button>
 	</template>
 
+
+	<template id="staff-scheduled-availability-row">
+		<select class="dow">
+			<option value="1">Monday</option>
+			<option value="2">Tuesday</option>
+			<option value="3">Wednesday</option>
+			<option value="4">Thursday</option>
+			<option value="5">Friday</option>
+			<option value="6">Saturday</option>
+			<option value="7">Sunday</option>
+		</select>
+		<label>Start
+			<input type="time" class="start"/>
+		</label>
+		<label>End
+			<input type="time" class="end"/>
+		</label>
+		<button class="del">Del</button>
+	</template>
 </html>

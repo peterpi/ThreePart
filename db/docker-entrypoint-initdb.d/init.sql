@@ -9,8 +9,9 @@ CREATE TABLE location (
 
 CREATE TABLE staff (
 	id SERIAL PRIMARY KEY,
-	uuid UUID NOT NULL UNIQUE, -- no default, it comes from account(id) from the tenant index
-	email text not null unique
+	uuid UUID NOT NULL UNIQUE default gen_random_uuid(),
+	email text not null unique,
+	name text not null unique
 );
 
 CREATE TABLE role (
