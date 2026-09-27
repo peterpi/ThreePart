@@ -1,3 +1,36 @@
 body{
 	font-family: system-ui;
 }
+
+.bookings-generic-list > * {
+	margin: 1em;
+}
+
+.bookings-generic-list-item {
+	display: block;
+	border: 1px;
+	background-color: oklch(85.683% 0.05852 155.874);
+}
+
+bookings-mainmenu {
+	display:flex;
+	flex-direction: row;
+}
+
+bookings-mainmenu > .sidebar {
+	min-width: 200px;
+	display:flex;
+	flex-direction: column;
+}
+
+bookings-mainmenu > .body {
+	flex-grow: 1;
+}
+
+#root {
+	display:flex;
+}
+
+#main{
+	flex-grow: 1;
+}

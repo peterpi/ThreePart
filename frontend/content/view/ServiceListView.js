@@ -32,6 +32,8 @@ export class ServiceListView extends HTMLElement
 
 	connectedCallback()
 	{
+		if (!this.#serviceList)
+			throw new Error ("setup has not been called.")
 		var t = templates.getElementById("service-list-view")
 		var clone = document.importNode(t.content, true)
 

@@ -36,17 +36,64 @@ class MainView extends HTMLElement
 		super();
 	}
 
+	#model
+
+	#body
+
+	setup (model)
+	{
+		this.#model = model
+	}
+
 	connectedCallback()
 	{
-		var shadow = this.attachShadow({mode:"closed"})
 		var clone = template.content.cloneNode(true)
-		shadow.appendChild(clone)
+		this.#body = clone.querySelector(".main")
 
-		var admin = shadow.querySelector("#admin")
-		admin.addEventListener("click", _ => {
-			this.dispatchEvent(new Event("admin-requested"))
+		let sidebar = clone.querySelector(".sidebar")
+		sidebar.querySelector("button.staff").addEventListener("click", _ => this.#viewStaff())
+		sidebar.querySelector("button.services").addEventListener("click", _ => this.#viewServices())
+		this.appendChild(clone)
+	}
+
+	async #changePage (asyncPageGenerator)
+	{
+		let parent = this.#body
+		while (parent.firstChild)
+			parent.removeChild(parent.firstChild)
+		let progress = document.createElement("progress")
+		parent.appendChild(progress)
+		let newPage = await asyncPageGenerator()
+		progress.remove()
+		parent.appendChild(newPage)
+	}
+
+
+	#viewStaff ()
+	{
+		let staffListPromise = this.#model.getStaffList() // promise
+		let viewPromise = import ("./view/StaffListView.js")
+		this.#changePage (async () => {
+			let staffList = await staffListPromise
+			await viewPromise
+			const view = document.createElement("staff-list-view")
+			view.setup (staffList)
+			return view
 		})
 	}
+
+	#viewServices()
+	{
+		let getServices = this.#model.getServices()
+		this.#changePage(async () => {
+			let services = await getServices
+			await import ("./view/ServiceListView.js")
+			const view = document.createElement("service-list-view")
+			view.setup(services)
+			return view
+		})
+	}
+
 }
 
 customElements.define("bookings-mainmenu", MainView)

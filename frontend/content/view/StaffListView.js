@@ -35,16 +35,33 @@ customElements.define("staff-list-row", StaffListRow)
 
 class StaffListView extends HTMLElement
 {
+	#staffList
 
 	#rowsParent
+
+	/** @type AbortController */
+	#abort
 
 	constructor()
 	{
 		super()
+		this.#abort = new AbortController()
 	}
 
-	connectedCallback()
+	async setup (staffList)
 	{
+		this.#staffList = staffList
+	}
+
+	async connectedCallback()
+	{
+		let staffList = this.#staffList
+		staffList.addEventListener(
+			"new-staff",
+			e => this.#addRow(e.detail.staff),
+			{signal: this.#abort.signal});
+
+
 		const t = templates.getElementById("staff-list-view")
 		var clone = t.content.cloneNode(true)
 		this.#rowsParent = clone.querySelector("section.rows")
@@ -55,15 +72,18 @@ class StaffListView extends HTMLElement
 		})
 
 		this.appendChild(clone)
+		
+		let all = await staffList.getAll()
+		all.forEach(x => this.#addRow(x))
+		this.querySelector("progress")?.remove()
 	}
 
-	async setup (staffList)
+	disconnectedCallback()
 	{
-		const all = await staffList.getAll()
-		this.#rowsParent.querySelector("progress")?.remove()
-		all.forEach (s => this.#addRow(s))
-		staffList.addEventListener("new-staff", e => this.#addRow(e.detail.staff))
+		this.#abort.abort()
 	}
+
+
 
 	#addRow (s)
 	{
@@ -80,7 +100,7 @@ class StaffListView extends HTMLElement
 		const email = newSection.querySelector("input.email").value
 		const name = newSection.querySelector("input.name").value
 		const fields = {email:email,name:name}
-		this.dispatchEvent(new CustomEvent ("new-requested", {detail:{staff:fields}}))
+		this.#staffList.postNew (fields)
 	}
 }
 

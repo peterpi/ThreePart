@@ -5,7 +5,7 @@
 		<template id="staff-list-view">
 			<h2>Staff</h2>
 			<button class="back">Back</button>
-			<section class="rows">
+			<section class="rows bookings-generic-list">
 				<progress/>
 			</section>
 
@@ -17,11 +17,13 @@
 			</section>
 		</template>
 
-		<template id="staff-list-row">
-			<label>Name<input type="text" class="name"/></label>
-			<section class="actions">
-				<button class="schedule">Schedule</button>
-			</section>
+		<template id="staff-list-row" >
+			<div class="bookings-generic-list-item">
+				<label>Name<input type="text" class="name"/></label>
+				<section class="actions">
+					<button class="schedule">Schedule</button>
+				</section>
+			</div>
 		</template>
 	</head>
 </html>
