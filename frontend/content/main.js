@@ -71,13 +71,9 @@ class MainView extends HTMLElement
 
 	#viewStaff ()
 	{
-		let staffListPromise = this.#model.getStaffList() // promise
-		let viewPromise = import ("./view/StaffListView.js")
 		this.#changePage (async () => {
-			let staffList = await staffListPromise
-			await viewPromise
+			await import ("./view/StaffListView.js")
 			const view = document.createElement("staff-list-view")
-			view.setup (staffList)
 			return view
 		})
 	}

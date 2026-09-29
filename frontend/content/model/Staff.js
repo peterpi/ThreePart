@@ -22,7 +22,7 @@ class Staff extends EventTarget
 }
 
 
-export class StaffList extends EventTarget
+class StaffList extends EventTarget
 {
 
 	/** @type Map<string,Staff> */
@@ -75,3 +75,5 @@ export class StaffList extends EventTarget
 		return s
 	}
 }
+
+export const staffList = new StaffList()

@@ -4,26 +4,22 @@ const templates = await fetch (new URL ("StaffListView.html", import.meta.url))
 	.then (resp => resp.text())
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
+const Staff = await import ("../model/Staff.js")
+
 class StaffListRow extends HTMLElement
 {
-	/** @type Staff */
-	#s
-
 	constructor()
 	{
 		super()
 	}
 
-	setup (s)
+	async connectedCallback()
 	{
-		this.#s = s
-	}
-
-	connectedCallback()
-	{
+		const uuid = this.getAttribute("staff")
+		const s = await Staff.staffList.byUuid(uuid)
 		const t = templates.getElementById("staff-list-row")
 		const clone = t.content.cloneNode(true)
-		clone.querySelector("input.name").value = this.#s.name
+		clone.querySelector("input.name").value = s.name
 		clone.querySelector("button.schedule").addEventListener("click", e=> {
 			this.dispatchEvent(new CustomEvent("schedule-requested"))
 		})
@@ -35,7 +31,6 @@ customElements.define("staff-list-row", StaffListRow)
 
 class StaffListView extends HTMLElement
 {
-	#staffList
 
 	#rowsParent
 
@@ -48,14 +43,11 @@ class StaffListView extends HTMLElement
 		this.#abort = new AbortController()
 	}
 
-	async setup (staffList)
-	{
-		this.#staffList = staffList
-	}
 
 	async connectedCallback()
 	{
-		let staffList = this.#staffList
+		const staffList = Staff.staffList;
+		
 		staffList.addEventListener(
 			"new-staff",
 			e => this.#addRow(e.detail.staff),
@@ -81,6 +73,7 @@ class StaffListView extends HTMLElement
 	disconnectedCallback()
 	{
 		this.#abort.abort()
+		this.#abort = new AbortController()
 	}
 
 
@@ -88,7 +81,7 @@ class StaffListView extends HTMLElement
 	#addRow (s)
 	{
 		var row = document.createElement("staff-list-row")
-		row.setup(s)
+		row.setAttribute("staff", s.uuid)
 		this.#rowsParent.appendChild(row)
 		row.addEventListener("schedule-requested", e => {
 			this.dispatchEvent(new CustomEvent (e.type, {detail:{staff:s}}))
@@ -100,7 +93,7 @@ class StaffListView extends HTMLElement
 		const email = newSection.querySelector("input.email").value
 		const name = newSection.querySelector("input.name").value
 		const fields = {email:email,name:name}
-		this.#staffList.postNew (fields)
+		Staff.staffList.postNew(fields)
 	}
 }
 
