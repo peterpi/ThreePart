@@ -46,6 +46,14 @@ CREATE TABLE offer (
 	endTime TIMESTAMP
 );
 
+CREATE TABLE offer_period(
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+	offer integer not null references offer(id),
+	price MONEY NOT NULL,
+	notes TEXT,
+	tstzrange validity NOT NULL
+)
+
 -- lines for "Manicure" and "Pedicure" in the offer example above.
 CREATE TABLE offer_service (
 	offer INTEGER REFERENCES offer(id) ON DELETE CASCADE,
