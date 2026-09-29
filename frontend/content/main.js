@@ -84,13 +84,22 @@ class MainView extends HTMLElement
 
 	#viewServices()
 	{
+		const model = this.#model
 		let getServices = this.#model.getServices()
 		this.#changePage(async () => {
 			let services = await getServices
-			await import ("./view/ServiceListView.js")
+			await Promise.all ([
+				import ("./view/ServiceListView.js"),
+				import ("./view/OffersEditor.js")])
 			const view = document.createElement("service-list-view")
 			view.setup(services)
-			return view
+			const offers = document.createElement("offers-editor")
+			await offers.setup(model)
+
+			const div = document.createElement("div")
+			div.appendChild(view)
+			div.appendChild(offers)
+			return div
 		})
 	}
 

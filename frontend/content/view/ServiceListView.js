@@ -22,6 +22,8 @@ export class ServiceListView extends HTMLElement
 	/** @type HTMLDivElement */
 	#newBox
 
+	#abort
+
 	setup (model)
 	{
 		if (!model)
@@ -32,6 +34,7 @@ export class ServiceListView extends HTMLElement
 
 	connectedCallback()
 	{
+		this.#abort = new AbortController()
 		if (!this.#serviceList)
 			throw new Error ("setup has not been called.")
 		var t = templates.getElementById("service-list-view")
@@ -41,10 +44,6 @@ export class ServiceListView extends HTMLElement
 		if (!this.#rowParent)
 			throw new Error ("Failed to find row parent in template.")
 
-		var back = clone.getElementById("back")
-		back.addEventListener("click", _ => {
-			this.remove()
-		})
 
 		var newBox = clone.getElementById("new")
 		if (!newBox)
@@ -55,15 +54,22 @@ export class ServiceListView extends HTMLElement
 		shadow.appendChild(clone)
 
 		var serviceList = this.#serviceList
-		serviceList.addEventListener("service-added", e => this.#addRow(e.detail.service))
+		serviceList.addEventListener(
+			"service-added",
+			e => this.#addRow(e.detail.service),
+			{signal:this.#abort.signal})
+		serviceList.addEventListener(
+			"service-deleted",
+			e => this.#removeRowForService(e.detail.uuid),
+			{signal:this.#abort.signal})
 		serviceList.forEach (s => this.#addRow(s))
-		serviceList.addEventListener("service-deleted", e => this.#removeRowForService(e.detail.uuid))
 	}
 
-
-	#addRowForEvent (evt) {
-		this.#addRow(evt.detail)
+	disconnectedCallback()
+	{
+		this.#abort.abort()
 	}
+
 
 	#addRow (service)
 	{
@@ -73,15 +79,15 @@ export class ServiceListView extends HTMLElement
 		var tdName = tr.querySelector ("td.name")
 		var name = service.getName()
 		tdName.innerText = name
-		tr.querySelector("button.del").addEventListener("click", e => {
-			this.dispatchEvent(new CustomEvent ("del-requested", {detail:{service:service}}))
-		})
+		tr.querySelector("button.del").addEventListener(
+			"click",
+			async e => this.#serviceList.delete(service))
 		this.#rowParent.appendChild(tr)
 		var uuid = service.getUuid()
 		this.#rowsByServiceUuid.set(uuid,tr)
 	}
 
-	/** @param {CustomEvent} removalEvent */
+
 	#removeRowForService (uuid)
 	{
 		var rowsByService = this.#rowsByServiceUuid
@@ -92,10 +98,11 @@ export class ServiceListView extends HTMLElement
 		row.remove()
 	}
 
-	#requestNew (newBox)
+	async #requestNew (newBox)
 	{
-		var name = newBox.querySelector("#name").value
-		this.dispatchEvent(new CustomEvent ("new-requested", {detail:{name:name}}))
+		const name = newBox.querySelector("#name").value
+		const fields = {name:name}
+		await this.#serviceList.postNew(fields)
 	}
 }
 
