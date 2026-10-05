@@ -5,6 +5,9 @@ var templates = await fetch (new URL ("StaffAvailabilityEditor.html", import.met
 
 await import ("../components/TimeRangePicker.js")
 
+const staff = await import ("../model/Staff.js")
+const availability = await import ("../model/StaffAvailabilitySchedule.js")
+
 class StaffAvailabilityEditorRow extends HTMLElement
 {
 	/** @type HTMLSelectElement */
@@ -39,26 +42,24 @@ class StaffAvailabilityEditorRow extends HTMLElement
 customElements.define("staff-availability-editor-row", StaffAvailabilityEditorRow)
 
 
+// Shows availability for one staff.
 class StaffAvailabilityEditor extends HTMLElement
 {
-	#staff
 
 	constructor()
 	{
 		super()
 	}
 
-	setup (staff)
-	{
-		this.#staff = staff
-	}
 
-	connectedCallback()
+	async connectedCallback()
 	{
+		const staffUuid = this.getAttribute("staff")
+		const staff = await staff.byUuid(staffUuid)
 		var t = templates.getElementById("staff-availability-editor")
 		var clone = t.content.cloneNode(true)
 		clone.querySelector("button.back").addEventListener("click", _ => this.dispatchEvent(new Event("back-requested")))
-		this.#setNameAndEmail(clone, this.#staff)
+		this.#setNameAndEmail(clone, staff)
 		this.appendChild(clone)
 	}
 

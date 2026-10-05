@@ -3,18 +3,26 @@
 	<head>
 
 		<template id="staff-list-view">
-			<h2>Staff</h2>
-			<button class="back">Back</button>
-			<section class="rows bookings-generic-list">
-				<progress/>
-			</section>
+			<div style="display:flex;">
+				<div class="main">
+					
+					<h2>Staff</h2>
+					<button class="back">Back</button>
+					<section class="rows bookings-generic-list">
+						<progress/>
+					</section>
 
-			<section class="new">
-				New Staff
-				<label>name<input type="text" class="name"/></label>
-				<label>email<input type="text" class="email"/></label>
-				<button class="submit">Create</button>
-			</section>
+					<section class="new">
+						New Staff
+						<label>name<input type="text" class="name"/></label>
+						<label>email<input type="text" class="email"/></label>
+						<button class="submit">Create</button>
+					</section>
+				</div>
+				<div class="side" style="min-width:200px">
+					Hello sidebar
+				</div>
+			</div>
 		</template>
 
 		<template id="staff-list-row" >
@@ -23,6 +31,37 @@
 				<section class="actions">
 					<button class="schedule">Schedule</button>
 				</section>
+			</div>
+		</template>
+
+
+		<template id="staff-inspector">
+			<h3>Inspectah</h3>
+			<div class="bookings-generic-field-set">
+
+				<label>Name<input type="text" class="name"/></label>
+				<label>Email<input type="text" class="email"/></label>
+
+				<details>
+					<summary>Hello</summary>
+					There's more
+				</details>
+			</div>
+		</template>
+
+		<template id="staff-scheduled-availability-list">
+			<div id="rows">
+
+			</div>
+			<div id="new">
+
+			</div>
+		</template>
+
+		<template id="staff-availability-row">
+			<div>
+				<input type="time" class="start">
+				<input type="time" class="end">
 			</div>
 		</template>
 	</head>

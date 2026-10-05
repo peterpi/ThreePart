@@ -81,7 +81,7 @@ class MainView extends HTMLElement
 	#viewServices()
 	{
 		const model = this.#model
-		let getServices = this.#model.getServices()
+		let getServices = model.getServices()
 		this.#changePage(async () => {
 			let services = await getServices
 			await Promise.all ([
@@ -96,6 +96,16 @@ class MainView extends HTMLElement
 			div.appendChild(view)
 			div.appendChild(offers)
 			return div
+		})
+	}
+
+
+	#viewSchedules()
+	{
+		this.#changePage(async () => {
+			await import ("./view/StaffAvailabilityEditor.js")
+			let view = document.createElement("staff-availability-editor")
+			return view
 		})
 	}
 

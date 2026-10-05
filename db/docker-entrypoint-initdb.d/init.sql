@@ -30,7 +30,24 @@ CREATE TABLE staff_role (
 CREATE TABLE service (
 	id SERIAL PRIMARY KEY,
 	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
-	name TEXT NOT NULL UNIQUE
+	name TEXT NOT NULL UNIQUE,
+	duration INTERVAL NOT NULL # but can be zero.
+);
+
+-- e.g. "Gel"
+CREATE TABLE service_addon (
+	id SERIAL PRIMARY KEY,
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+	name TEXT NOT NULL,
+	notes TEXT,
+	duration INTERVAL NOT NULL
+);
+
+-- Services can have many add-ons.  Add-ons can apply to many services.
+CREATE TABLE service_addon_m2m (
+	service INTEGER NOT NULL REFERENCES service(id) ON DELETE CASCADE,
+	addon INTEGER NOT NULL REFERENCES service_addon(id) ON DELETE RESTRICT,
+	UNIQUE (service, addon)
 );
 
 
@@ -65,13 +82,23 @@ CREATE TABLE offer_service (
 
 CREATE TABLE cart (
 	id SERIAL PRIMARY KEY,
-	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid()
+	uuid UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+	created TIMESTAMP NOT NULL DEFAULT 'now'
 );
 
 CREATE TABLE cart_line (
+	uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	cart INTEGER NOT NULL REFERENCES cart(id) ON DELETE CASCADE,
-	offer INTEGER NOT NULL REFERENCES offer(id) ON DELETE RESTRICT
+	-- TODO ordering of lines witin a single cart
+	offer INTEGER NOT NULL REFERENCES offer(id) ON DELETE RESTRICT,
 );
+
+CREATE TABLE cart_line_addons (
+	cart_line UUID NOT NULL REFERENCES cart_line(uuid),
+	addon INTEGER NOT NULL REFERENCES service_addon(id)
+);
+
+
 
 CREATE TABLE sale (
 	id SERIAL PRIMARY KEY,

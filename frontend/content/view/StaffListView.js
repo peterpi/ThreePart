@@ -29,10 +29,28 @@ class StaffListRow extends HTMLElement
 
 customElements.define("staff-list-row", StaffListRow)
 
+class StaffInspector extends HTMLElement
+{
+
+	async connectedCallback()
+	{
+		const uuid = this.getAttribute("staff")
+		const s = await Staff.staffList.byUuid(uuid)
+		const t = templates.getElementById("staff-inspector")
+		const clone = t.content.cloneNode(true)
+		clone.querySelector("input.name").value = s.name
+		this.appendChild(clone)
+	}
+}
+
+customElements.define("staff-inspector", StaffInspector)
+
 class StaffListView extends HTMLElement
 {
 
 	#rowsParent
+
+	#inspectorParent
 
 	/** @type AbortController */
 	#abort
@@ -63,6 +81,8 @@ class StaffListView extends HTMLElement
 			this.#requestNew(newSection)
 		})
 
+		this.#inspectorParent = clone.querySelector("div.side")
+
 		this.appendChild(clone)
 		
 		let all = await staffList.getAll()
@@ -86,6 +106,17 @@ class StaffListView extends HTMLElement
 		row.addEventListener("schedule-requested", e => {
 			this.dispatchEvent(new CustomEvent (e.type, {detail:{staff:s}}))
 		})
+		row.addEventListener("click", e => this.#inspect(s))
+	}
+
+	#inspect (staff)
+	{
+		const parent = this.#inspectorParent
+		while (parent.firstChild)
+			parent.removeChild(parent.firstChild)
+		var inspector = document.createElement("staff-inspector")
+		inspector.setAttribute("staff", staff.uuid)
+		parent.appendChild(inspector)
 	}
 
 	#requestNew (newSection)
@@ -93,7 +124,7 @@ class StaffListView extends HTMLElement
 		const email = newSection.querySelector("input.email").value
 		const name = newSection.querySelector("input.name").value
 		const fields = {email:email,name:name}
-		Staff.staffList.postNew(fields)
+		this.dispatchEvent(new CustomEvent("new-requested", {detail:{staff:{fields}}}))
 	}
 }
 

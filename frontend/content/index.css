@@ -34,3 +34,7 @@ bookings-mainmenu > .body {
 #main{
 	flex-grow: 1;
 }
+
+button {
+	background: none;
+}
