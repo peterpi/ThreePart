@@ -12,13 +12,4 @@ export class ServiceListController
 		viewParent.appendChild(view)
 	}
 
-	/**
-	 * @param {ServiceList} serviceList
-	 * @param {CustomEvent} evt
-	 * */
-	async #createNew (serviceList, evt)
-	{
-		var details = evt.detail
-		var s = await serviceList.postNew (details)
-	}
 }

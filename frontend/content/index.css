@@ -14,13 +14,13 @@ body{
 	background-color: oklch(85.683% 0.05852 155.874);
 }
 
-bookings-mainmenu {
+bookings-main-view {
 	display:flex;
 	flex-direction: row;
 }
 
-bookings-mainmenu > .sidebar {
-	min-width: 200px;
+bookings-main-view > .sidebar {
+	width: 200px;
 	display:flex;
 	flex-direction: column;
 }
@@ -29,14 +29,8 @@ bookings-mainmenu > .body {
 	flex-grow: 1;
 }
 
-#root {
+bookings-main-view > .inspector {
+	width: 200px;
 	display:flex;
-}
-
-#main{
-	flex-grow: 1;
-}
-
-button {
-	background: none;
+	flex-direction: column;
 }

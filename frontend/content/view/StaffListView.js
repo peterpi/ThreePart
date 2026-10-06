@@ -4,21 +4,26 @@ const templates = await fetch (new URL ("StaffListView.html", import.meta.url))
 	.then (resp => resp.text())
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
-const Staff = await import ("../model/Staff.js")
-
 class StaffListRow extends HTMLElement
 {
+
+	/** @type Staff */
+	#s
+
 	constructor()
 	{
 		super()
 	}
 
+	setStaff (s) {
+		this.#s = s
+	}
+
 	async connectedCallback()
 	{
-		const uuid = this.getAttribute("staff")
-		const s = await Staff.staffList.byUuid(uuid)
 		const t = templates.getElementById("staff-list-row")
 		const clone = t.content.cloneNode(true)
+		const s = this.#s
 		clone.querySelector("input.name").value = s.name
 		clone.querySelector("button.schedule").addEventListener("click", e=> {
 			this.dispatchEvent(new CustomEvent("schedule-requested"))
@@ -32,10 +37,13 @@ customElements.define("staff-list-row", StaffListRow)
 class StaffInspector extends HTMLElement
 {
 
+	#s
+
+	setStaff (s) {this.#s = s}
+
 	async connectedCallback()
 	{
-		const uuid = this.getAttribute("staff")
-		const s = await Staff.staffList.byUuid(uuid)
+		const s = this.#s
 		const t = templates.getElementById("staff-inspector")
 		const clone = t.content.cloneNode(true)
 		clone.querySelector("input.name").value = s.name
@@ -48,6 +56,9 @@ customElements.define("staff-inspector", StaffInspector)
 class StaffListView extends HTMLElement
 {
 
+	/** @type StaffList */
+	#staffList
+
 	#rowsParent
 
 	#inspectorParent
@@ -58,13 +69,19 @@ class StaffListView extends HTMLElement
 	constructor()
 	{
 		super()
-		this.#abort = new AbortController()
+	}
+
+	setStaffList (sl) {
+		this.#staffList = sl
 	}
 
 
 	async connectedCallback()
 	{
-		const staffList = Staff.staffList;
+		this.#abort = new AbortController()
+		const staffList = this.#staffList
+		if (!staffList)
+			throw new Error ("Call setStaffList before connecting.");
 		
 		staffList.addEventListener(
 			"new-staff",
@@ -93,7 +110,6 @@ class StaffListView extends HTMLElement
 	disconnectedCallback()
 	{
 		this.#abort.abort()
-		this.#abort = new AbortController()
 	}
 
 
@@ -101,22 +117,19 @@ class StaffListView extends HTMLElement
 	#addRow (s)
 	{
 		var row = document.createElement("staff-list-row")
-		row.setAttribute("staff", s.uuid)
-		this.#rowsParent.appendChild(row)
+		row.setStaff(s)
 		row.addEventListener("schedule-requested", e => {
 			this.dispatchEvent(new CustomEvent (e.type, {detail:{staff:s}}))
 		})
 		row.addEventListener("click", e => this.#inspect(s))
+		this.#rowsParent.appendChild(row)
 	}
 
 	#inspect (staff)
 	{
-		const parent = this.#inspectorParent
-		while (parent.firstChild)
-			parent.removeChild(parent.firstChild)
 		var inspector = document.createElement("staff-inspector")
-		inspector.setAttribute("staff", staff.uuid)
-		parent.appendChild(inspector)
+		inspector.setStaff(staff)
+		this.dispatchEvent(new CustomEvent ("inspecting-staff", {detail:{view:inspector}}))
 	}
 
 	#requestNew (newSection)

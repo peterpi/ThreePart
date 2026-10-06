@@ -10,13 +10,10 @@ login.addEventListener("logged-in", async _ => {
 	console.log ("You're in.")
 	login.remove();
 
-
-	let model = await import ("./model/Model.js")
+	const model = await import ("./model/Model.js")
 		.then (x => new x.Model())
-
-	await import ("./main.js")
-	let mainMenu = document.createElement("bookings-mainmenu")
-	mainMenu.setup(model)
-	document.body.appendChild(mainMenu)
-
+	const controller = await import ("./controller/Controller.js")
+		.then (x => new x.Controller(model))
+	const view = await controller.createView()
+	document.body.appendChild(view)
 })

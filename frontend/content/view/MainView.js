@@ -1,60 +1,39 @@
 
 
-var template = await fetch ("main.html")
-	.then (r => r.text())
+var templates = await fetch (new URL("MainView.html", import.meta.url))
+	.then (resp => resp.text())
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
-	.then (doc => doc.querySelector("template"))
-
-
-export class MainMenu
-{
-	view
-
-	constructor ()
-	{
-		var view = document.createElement ("bookings-mainmenu")
-		view.addEventListener("admin-requested", _ => {
-			view.hidden = true
-			import ("./admin.js").then(a => {
-				var admin = new a.AdminMenu()
-				document.body.appendChild(admin.view)
-				admin.view.addEventListener("close-requested", _ => {
-					admin.view.remove()
-					view.hidden = false
-				})
-			})
-		})
-		this.view = view
-	}
-}
 
 
 class MainView extends HTMLElement
 {
-	constructor()
-	{
-		super();
-	}
 
 	#model
 
+	/** @type HTMLElement */
 	#body
 
-	setup (model)
-	{
+	/** @type HTMLElement */
+	#inspector
+
+	setModel (model) {
 		this.#model = model
 	}
 
 	connectedCallback()
 	{
-		var clone = template.content.cloneNode(true)
-		this.#body = clone.querySelector(".main")
+		const clone = templates.getElementById("main").content.cloneNode(true)
+
+		this.#body = clone.querySelector("div.main")
+		this.#inspector = clone.querySelector("div.inspector")
 
 		let sidebar = clone.querySelector(".sidebar")
 		sidebar.querySelector("button.staff").addEventListener("click", _ => this.#viewStaff())
 		sidebar.querySelector("button.services").addEventListener("click", _ => this.#viewServices())
+
 		this.appendChild(clone)
 	}
+
 
 	async #changePage (asyncPageGenerator)
 	{
@@ -68,12 +47,23 @@ class MainView extends HTMLElement
 		parent.appendChild(newPage)
 	}
 
+	#setInspector (ele)
+	{
+		const i = this.#inspector
+		while (i.firstChild)
+			i.removeChild(i.firstChild)
+		i.appendChild(ele)
+	}
+
 
 	#viewStaff ()
 	{
 		this.#changePage (async () => {
-			await import ("./view/StaffListView.js")
+			const staffList = await this.#model.getStaffList()
+			await import ("./StaffListView.js")
 			const view = document.createElement("staff-list-view")
+			view.setStaffList(staffList)
+			view.addEventListener("inspecting-staff", e => this.#setInspector(e.detail.view))
 			return view
 		})
 	}
@@ -81,22 +71,13 @@ class MainView extends HTMLElement
 	#viewServices()
 	{
 		this.#changePage(async () => {
-			await import ("./view/ServiceListView.js")
+			await import ("./ServiceListView.js")
 			const view = document.createElement("service-list-view")
 			return view
 		})
 	}
 
 
-	#viewSchedules()
-	{
-		this.#changePage(async () => {
-			await import ("./view/StaffAvailabilityEditor.js")
-			let view = document.createElement("staff-availability-editor")
-			return view
-		})
-	}
-
 }
 
-customElements.define("bookings-mainmenu", MainView)
+customElements.define("bookings-main-view", MainView)

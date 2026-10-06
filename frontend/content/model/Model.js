@@ -2,6 +2,19 @@
 export class Model
 {
 
+	#staffList
+
+	async getStaffList()
+	{
+		let staff = this.#staffList
+		if (!staff) {
+			staff = await import ("./Staff.js")
+				.then (x => new x.StaffList())
+			this.#staffList = staff
+		}
+		return staff
+	}
+
 	/** @type ServiceList */
 	#serviceList
 
