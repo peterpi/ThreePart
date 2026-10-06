@@ -130,5 +130,3 @@ export class ServiceList extends EventTarget
 	}
 
 }
-
-export const serviceList = new ServiceList()

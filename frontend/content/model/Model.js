@@ -23,7 +23,7 @@ export class Model
 		var sl = this.#serviceList
 		if (!sl) {
 			sl = await import ("./Services.js")
-				.then (mod => mod.ServiceList.getAll())
+				.then (mod => new mod.ServiceList())
 			this.#serviceList = sl
 		}
 		return sl

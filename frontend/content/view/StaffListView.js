@@ -24,7 +24,7 @@ class StaffListRow extends HTMLElement
 		const t = templates.getElementById("staff-list-row")
 		const clone = t.content.cloneNode(true)
 		const s = this.#s
-		clone.querySelector("input.name").value = s.name
+		clone.querySelector("div.name").textContent = s.name
 		clone.querySelector("button.schedule").addEventListener("click", e=> {
 			this.dispatchEvent(new CustomEvent("schedule-requested"))
 		})

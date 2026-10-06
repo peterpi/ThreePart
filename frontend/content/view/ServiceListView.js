@@ -1,15 +1,16 @@
 
 
-
 var templates = await fetch (new URL ("ServiceListView.html", import.meta.url))
 	.then (resp => resp.text())
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
-const serviceList = await import ("../model/Services.js")
-	.then (mod => mod.serviceList)
 
 export class ServiceListView extends HTMLElement
 {
+
+	/** @type ServiceList */
+	#serviceList
+
 	/** @type HTMLElement */
 	#rowParent
 
@@ -26,10 +27,15 @@ export class ServiceListView extends HTMLElement
 		super()
 		this.#rowsByServiceUuid = new Map()
 	}
-
+	
+	setServiceList(sl) {this.#serviceList = sl}
 
 	async connectedCallback()
 	{
+		const serviceList = this.#serviceList
+		if (!serviceList)
+			throw new Error ("Must call setServiceList before connect.")
+
 		this.#abort = new AbortController()
 
 		var t = templates.getElementById("service-list-view")
@@ -39,13 +45,13 @@ export class ServiceListView extends HTMLElement
 		if (!this.#rowParent)
 			throw new Error ("Failed to find row parent in template.")
 
-
 		var newBox = clone.getElementById("new")
 		if (!newBox)
 			throw new Error ("Failed to locate new box.")
 		clone.getElementById("submit").addEventListener("click", _ => this.#requestNew(newBox))
 
 		this.appendChild(clone)
+
 
 		serviceList.addEventListener(
 			"service-added",
