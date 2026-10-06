@@ -34,7 +34,7 @@ class StaffList extends EventTarget
 		this.#byUuid = new Map()
 	}
 
-	async getAll()
+	async getAll() // TODO What about duplicate calls?
 	{
 		const url = "/api/staff"
 		const j = await fetch(url).then(resp => resp.json())
