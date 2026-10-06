@@ -5,14 +5,11 @@ var templates = await fetch (new URL ("ServiceListView.html", import.meta.url))
 	.then (resp => resp.text())
 	.then (text => new DOMParser().parseFromString(text, "text/html"))
 
-
+const serviceList = await import ("../model/Services.js")
+	.then (mod => mod.serviceList)
 
 export class ServiceListView extends HTMLElement
 {
-
-	/** @type ServiceList */
-	#serviceList
-
 	/** @type HTMLElement */
 	#rowParent
 
@@ -24,19 +21,17 @@ export class ServiceListView extends HTMLElement
 
 	#abort
 
-	setup (model)
+	constructor()
 	{
-		if (!model)
-			throw new Error ("Need model parameter.")
+		super()
 		this.#rowsByServiceUuid = new Map()
-		this.#serviceList = model
 	}
 
-	connectedCallback()
+
+	async connectedCallback()
 	{
 		this.#abort = new AbortController()
-		if (!this.#serviceList)
-			throw new Error ("setup has not been called.")
+
 		var t = templates.getElementById("service-list-view")
 		var clone = document.importNode(t.content, true)
 
@@ -52,7 +47,6 @@ export class ServiceListView extends HTMLElement
 
 		this.appendChild(clone)
 
-		var serviceList = this.#serviceList
 		serviceList.addEventListener(
 			"service-added",
 			e => this.#addRow(e.detail.service),
@@ -61,7 +55,9 @@ export class ServiceListView extends HTMLElement
 			"service-deleted",
 			e => this.#removeRowForService(e.detail.uuid),
 			{signal:this.#abort.signal})
-		serviceList.forEach (s => this.#addRow(s))
+
+		const services = await serviceList.getAll()
+		services.forEach(s => this.#addRow(s))
 	}
 
 	disconnectedCallback()
@@ -103,7 +99,7 @@ export class ServiceListView extends HTMLElement
 	{
 		const name = newBox.querySelector("#name").value
 		const fields = {name:name}
-		await this.#serviceList.postNew(fields)
+		this.dispatchEvent(new CustomEvent ("new-requested", {detail:{fields:fields}}))
 	}
 }
 

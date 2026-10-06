@@ -52,15 +52,8 @@ export class ServiceList extends EventTarget
 
 	constructor (j)
 	{
-		if (!j || !j.services)
-			throw new Error ("Parameter must be a json response.")
 		super()
 		this.#services = new Map()
-		j.services.forEach (x => {
-			var service = new Service(x)
-			var uuid = service.getUuid()
-			this.#services.set(uuid,service)
-		})
 	}
 
 	static #parse(j)
@@ -69,13 +62,14 @@ export class ServiceList extends EventTarget
 		services = services.map (s => Service.parse(s))
 	}
 
-	static async getAll()
+	async getAll()
 	{
 		var url = "/api/services"
-		var serviceList = fetch (url)
+		var j = await fetch (url)
 			.then (resp => resp.json())
-			.then (j => new ServiceList(j))
-		return serviceList
+		let services = j.services.map (x => new Service(x))
+		services.forEach(s => this.#services.set(s.uuid, s))
+		return services
 	}
 
 	getByUuid (uuid)
@@ -135,5 +129,6 @@ export class ServiceList extends EventTarget
 		services.forEach(s => cb(s))
 	}
 
-	
 }
+
+export const serviceList = new ServiceList()
