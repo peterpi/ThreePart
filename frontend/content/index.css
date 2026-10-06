@@ -4,10 +4,12 @@ body{
 
 .bookings-generic-list > * {
 	margin: 1em;
+	display: block;
 }
 
 .bookings-generic-list-item {
-	display: block;
+	display: inline-flex;
+	flex-direction: column;
 	border: 1px;
 	background-color: oklch(85.683% 0.05852 155.874);
 }

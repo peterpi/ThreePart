@@ -40,7 +40,7 @@ export class ServiceListView extends HTMLElement
 		var t = templates.getElementById("service-list-view")
 		var clone = document.importNode(t.content, true)
 
-		this.#rowParent = clone.getElementById("rowparent")
+		this.#rowParent = clone.querySelector("div.rowparent")
 		if (!this.#rowParent)
 			throw new Error ("Failed to find row parent in template.")
 
@@ -50,8 +50,7 @@ export class ServiceListView extends HTMLElement
 			throw new Error ("Failed to locate new box.")
 		clone.getElementById("submit").addEventListener("click", _ => this.#requestNew(newBox))
 
-		var shadow = this.attachShadow({mode:"open"})
-		shadow.appendChild(clone)
+		this.appendChild(clone)
 
 		var serviceList = this.#serviceList
 		serviceList.addEventListener(
@@ -73,18 +72,20 @@ export class ServiceListView extends HTMLElement
 
 	#addRow (service)
 	{
-		var rowTemplate = templates.getElementById("service-list-row")
+		var rowTemplate = templates.getElementById("service-list-item")
 		var clone = document.importNode(rowTemplate.content, true)
-		var tr = clone.querySelector("tr")
-		var tdName = tr.querySelector ("td.name")
+
 		var name = service.getName()
-		tdName.innerText = name
-		tr.querySelector("button.del").addEventListener(
+		var nameSpan = clone.querySelector("span.name")
+		nameSpan.innerText = name
+		
+		clone.querySelector("button.del").addEventListener(
 			"click",
-			async e => this.#serviceList.delete(service))
-		this.#rowParent.appendChild(tr)
+			_ => this.dispatchEvent(new CustomEvent ("delete-requested", service)))
+
+		this.#rowParent.appendChild(clone)
 		var uuid = service.getUuid()
-		this.#rowsByServiceUuid.set(uuid,tr)
+		this.#rowsByServiceUuid.set(uuid,clone)
 	}
 
 

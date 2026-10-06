@@ -4,14 +4,8 @@
 	<head>
 
 		<template id="service-list-view">
-			<table id="rowparent">
-				<thead>
-				<tr>
-					<th scope="col">Name</th>
-					<th scope="col">Actions</th>
-				</tr>
-				</thead>
-			</table>
+			<div class="rowparent bookings-generic-list">
+			</div>
 
 			<div id="new">
 				<section>New</section>
@@ -21,11 +15,12 @@
 			</div>
 		</template>
 
-		<template id="service-list-row">
-			<tr>
-				<td class="name"></td>
-				<td><button class="del">Del</button></td>
-			</tr>
+
+		<template id="service-list-item">
+			<div class="bookings-generic-list-item">
+				<span class="name">Name</span>
+				<button class="del">Del</button>
+			</div>
 		</template>
 	</template>
 	</head>
