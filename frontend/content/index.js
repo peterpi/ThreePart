@@ -4,7 +4,9 @@ import "./login.js"
 var login = document.createElement("bookings-login")
 document.body.appendChild(login)
 
-navigator.serviceWorker.register ("./sw.js")
+const sw = navigator.serviceWorker
+if (sw)
+	sw.register ("./sw.js")
 
 login.addEventListener("logged-in", async _ => {
 	console.log ("You're in.")
