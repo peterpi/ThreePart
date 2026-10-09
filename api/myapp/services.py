@@ -1,29 +1,41 @@
 
-from flask import (Blueprint, request, abort)
+from flask import Blueprint, request, abort, jsonify
 from .auth import auth
-from .db import get_db
+from .db import get_db, get_session
 import psycopg
 
+
+from .base import Base
+from uuid import UUID
+
+from sqlalchemy import Uuid, select
+from sqlalchemy.orm import Mapped, mapped_column
+
 bp = Blueprint("services", __name__)
+
+
+class Service(Base):
+	__tablename__ = "service"
+	uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+	name: Mapped[str] = mapped_column()
 
 
 @bp.get("")
 @auth.login_required
 def get_all():
-	db = get_db()
-	cur = db.execute ("SELECT uuid, name FROM service")
-	all = cur.fetchall()
-	return {"services" : all}
+	with get_session() as session:
+		get = select(Service)
+		rows = session.scalars(get).all()
+		return {"services" : rows}
 
 @bp.get("<uuid:uuid>")
 @auth.login_required
 def get_one(uuid):
-	db = get_db()
-	cur = db.execute ("SELECT uuid, name FROM service WHERE uuid = %s", (uuid,))
-	row = cur.fetchone()
-	if not row :
-		abort (404)
-	return row
+	with get_session() as session:
+		row = session.scalar(select(Service).where(Service.uuid == uuid))
+		if not row:
+			abort (404)
+		return jsonify(row)
 
 @bp.post("")
 @auth.login_required
@@ -34,7 +46,7 @@ def post_new():
 		try:
 			cur = db.execute ("INSERT INTO service (name) VALUES (%s) RETURNING name, uuid", (name,))
 			row = cur.fetchone()
-			return row
+			return dict(row)
 		except psycopg.errors.UniqueViolation as dupe:
 			abort (409)
 		except Exception as x:
